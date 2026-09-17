@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "ground-news-clone",
+  "name": "ground-truth",
   "description": "Ground News style bias check for any article, powered by TypeSafe.",
   "version": "1.0.0",
   "license": "MIT",

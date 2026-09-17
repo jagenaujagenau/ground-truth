@@ -13,7 +13,7 @@ Last updated: 2026-09-17
 
 ## Listing
 
-- Name: ground-news-clone
+- Name: Ground Truth
 - Summary: Adds a sidebar panel to the browser.
 - Description: TODO write two or three short paragraphs of user
   benefits. Describe what the user sees and gains, not how the code

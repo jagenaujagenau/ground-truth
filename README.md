@@ -1,17 +1,112 @@
+<div align="center">
+
 # Ground Truth
 
-Ground News style bias check for the article in your current tab, powered by [TypeSafe](https://docs.typesafe.ai) and built with [Extension.js](https://extension.js.org).
+Ground News style bias check for the article in your current tab.
 
-Every page you load is checked automatically: the toolbar icon turns into a Left / Center / Right stripe with an L, C, R or MIX badge (hover for the label). Pages with under 800 characters of paragraph text are skipped without an API call. To limit checks to specific sites, list their domains under **Settings → Sites** in the panel (subdomains included; empty = every site). Open the side panel to see a Left / Center / Right bias bar, piece type (news/analysis/opinion), topic, and how loaded the language is. All five judgments come from one TypeSafe `jev-latest` call (`src/typesafe.ts`).
+[![License](https://img.shields.io/github/license/jagenaujagenau/ground-truth?style=for-the-badge)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/jagenaujagenau/ground-truth?style=for-the-badge)](https://github.com/jagenaujagenau/ground-truth/stargazers)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](tsconfig.json)
+[![Powered by TypeSafe](https://img.shields.io/badge/Powered%20by-TypeSafe-16181d?style=for-the-badge)](https://docs.typesafe.ai)
 
-## Setup
+<br>
+
+<img src="docs/demo.gif" alt="A live NPR politics story on the left; the Ground Truth panel on the right reads its framing, shows the Left / Center / Right split, the spectrum and the language meter, then adds npr.org to the Sites list." width="860">
+
+<sub>Real run against a live NPR article — the judgments come from TypeSafe, not a mockup. <a href="docs/demo.mp4">Higher-quality MP4</a></sub>
+
+</div>
+
+## What is this?
+
+A browser extension that rates the political lean of whatever article you are reading. Every page you load is checked automatically: the toolbar icon becomes a Left / Center / Right stripe with an `L`, `C`, `R` or `MIX` badge, and the side panel shows the bias bar, piece type (news / analysis / opinion), topic, and how loaded the language is.
+
+All five judgments come from a single TypeSafe [`jev-latest`](https://docs.typesafe.ai) call in `src/typesafe.ts`. Pages with under 800 characters of paragraph text are skipped before any API call, and results are cached per URL for the session. Built with [Extension.js](https://extension.js.org); builds for Chromium, Firefox and Edge.
+
+## Quick Start
 
 ```sh
 cp .env.example .env   # set EXTENSION_PUBLIC_TYPESAFE_API_KEY
 npm install
 npm run dev            # Chromium with the extension loaded
-npm run build          # dist/chromium; build:firefox / build:edge also available
+```
+
+```sh
+npm run build          # dist/chromium; build:firefox and build:edge also available
 node src/typesafe.test.ts && node src/domains.test.ts
 ```
 
-The `.env` key is bundled into the build, so anyone with the build can read it. For shared builds, leave `.env` empty and paste a key under **Settings** in the panel (stored in `chrome.storage.local`).
+The `.env` key is bundled into the build, so anyone with the build can read it. For shared builds, leave `.env` empty and paste a key under **Settings** in the panel — it is stored in `chrome.storage.local`.
+
+To limit checks to specific sites, list their domains under **Settings → Sites** in the panel. Subdomains are included; an empty list means every site.
+
+## How it works
+
+```mermaid
+graph LR
+    Page[Page load] --> Content[content/scripts.ts<br/>extract title + prose]
+    Content --> BG[background.ts<br/>filter, cache, orchestrate]
+    BG --> TS[typesafe.ts<br/>one jev-latest call]
+    TS --> API[(api.typesafe.ai)]
+    BG --> Icon[Toolbar icon<br/>mark.ts]
+    BG --> Store[(chrome.storage.session)]
+    Store --> Panel[sidebar/<br/>bias bar + details]
+```
+
+The background worker never reads tab URLs — the extension asks for no `tabs` permission, so pages without a content script simply land in the `empty` state.
+
+## Project Structure
+
+```
+src/
+├── content/
+│   └── scripts.ts        # extracts the article's title and paragraph text
+├── images/               # toolbar and store icons (16–128px)
+├── sidebar/
+│   ├── index.html
+│   ├── scripts.ts        # renders the bias bar, details and Settings
+│   └── styles.css
+├── background.ts         # per-tab check loop, caching, icon painting
+├── domains.ts            # Sites list parsing and matching
+├── domains.test.ts
+├── manifest.json         # Chromium / Firefox manifest with per-browser keys
+├── mark.ts               # canvas brand mark, drawn from the lean shares
+├── shared.ts             # TabState, storage keys, API key resolution
+├── typesafe.ts           # the five questions and the TypeSafe call
+└── typesafe.test.ts
+extension.config.js
+package.json
+STORE.md
+tsconfig.json
+```
+
+## Documentation
+
+| Resource | Description |
+|----------|-------------|
+| [`src/typesafe.ts`](src/typesafe.ts) | The five questions sent to `jev-latest`, and how lean levels collapse into Left / Center / Right shares |
+| [`src/background.ts`](src/background.ts) | The per-tab check loop: extraction, filtering, caching, icon painting |
+| [`src/manifest.json`](src/manifest.json) | Permissions and per-browser manifest keys |
+| [`STORE.md`](STORE.md) | Store listing copy, permission justifications and reviewer notes |
+| [TypeSafe docs](https://docs.typesafe.ai) | The System One API behind the judgments |
+| [Extension.js docs](https://extension.js.org) | Build tooling and browser targets |
+
+## Contributing
+
+Issues and pull requests are welcome. Run both test files before opening a PR — they are plain `node` scripts with no test runner.
+
+<a href="https://github.com/jagenaujagenau/ground-truth/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jagenaujagenau/ground-truth" />
+</a>
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+
+[![Star History Chart](https://api.star-history.com/svg?repos=jagenaujagenau/ground-truth&type=Date)](https://star-history.com/#jagenaujagenau/ground-truth&Date)
+
+</div>
