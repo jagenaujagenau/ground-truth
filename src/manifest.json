@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "firefox:browser_specific_settings": {
     "gecko": {
-      "id": "typescript@extension.js",
+      "id": "ground-truth@local",
       "data_collection_permissions": {
         "required": [
           "none"
@@ -13,8 +13,8 @@
       }
     }
   },
-  "name": "ground-news-clone",
-  "description": "Adds a sidebar panel to the browser with a simple page.",
+  "name": "Ground Truth",
+  "description": "Ground News style bias check for any article, powered by TypeSafe.",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -30,7 +30,7 @@
       "64": "images/icon-64.png",
       "128": "images/icon-128.png"
     },
-    "default_title": "Open Side Panel"
+    "default_title": "Open Ground Truth"
   },
   "firefox:browser_action": {
     "default_icon": {
@@ -40,18 +40,19 @@
       "64": "images/icon-64.png",
       "128": "images/icon-128.png"
     },
-    "default_title": "Open Side Panel"
+    "default_title": "Open Ground Truth"
   },
   "chromium:side_panel": {
     "default_path": "sidebar/index.html",
-    "default_title": "Side Panel Content"
+    "default_title": "Ground Truth"
   },
   "firefox:sidebar_action": {
     "default_panel": "sidebar/index.html",
-    "default_title": "Side Panel Content"
+    "default_title": "Ground Truth"
   },
   "chromium:permissions": [
-    "sidePanel"
+    "sidePanel",
+    "storage"
   ],
   "background": {
     "chromium:service_worker": "background.ts",
@@ -68,5 +69,12 @@
         "content/scripts.ts"
       ]
     }
+  ],
+  "chromium:host_permissions": [
+    "https://api.typesafe.ai/*"
+  ],
+  "firefox:permissions": [
+    "storage",
+    "https://api.typesafe.ai/*"
   ]
 }

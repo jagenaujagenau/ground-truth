@@ -1,45 +1,43 @@
-import createContentApp from './ContentApp'
-import './styles.css'
+// Answers the sidebar's request for the current page's article text.
+const MAX_CHARS = 6000
 
-console.log('[From the page context] Hello from content_scripts!')
+const paragraphsIn = (root: Element) =>
+  [...root.querySelectorAll('p')].map((p) => p.innerText.trim()).filter((t) => t.length > 40)
 
-/**
- * Extension.js content_script entrypoint. The framework calls this on
- * injection and calls the returned function on HMR/teardown to clean up.
- * Do not invoke it yourself.
- */
-export default function initial() {
-  const rootDiv = document.createElement('div')
-  rootDiv.setAttribute('data-extension-root', 'true')
-  // Isolate the host from page styles (e.g. example.com ships div{opacity:.8},
-  // which would otherwise fade the whole widget): the shadow DOM only protects
-  // descendants; the host element itself still takes page CSS.
-  rootDiv.style.cssText = 'all: initial !important'
-  document.body.appendChild(rootDiv)
-
-  // Injecting content_scripts inside a shadow dom
-  // prevents conflicts with the host page's styles.
-  // This way, styles from the extension won't leak into the host page.
-  const shadowRoot = rootDiv.attachShadow({mode: 'open'})
-
-  const styleElement = document.createElement('style')
-  shadowRoot.appendChild(styleElement)
-
-  fetchCSS().then((response) => (styleElement.textContent = response))
-
-  // Render ContentApp inside shadow root
-  const container = createContentApp()
-  shadowRoot.appendChild(container)
-
-  return () => {
-    rootDiv.remove()
-  }
+// The icon the page declares, preferring one crisp enough for a 2x display.
+function favicon() {
+  const links = [...document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"], link[rel="apple-touch-icon"]')]
+  const size = (l: HTMLLinkElement) => parseInt(l.sizes?.value ?? '') || (l.href.endsWith('.svg') ? 512 : 16)
+  const best = links.filter((l) => /^https?:/.test(l.href)).sort((a, b) => Math.abs(size(a) - 64) - Math.abs(size(b) - 64))[0]
+  return best?.href
 }
 
-async function fetchCSS() {
-  const cssUrl = new URL('./styles.css', import.meta.url)
-  const response = await fetch(cssUrl)
-  const text = await response.text()
+function readArticle() {
+  // The first <article> is often a widget (e.g. a radio player): use the tightest container
+  // holding most of the page's prose, falling back to the whole body.
+  const all = paragraphsIn(document.body)
+  const total = all.join('').length
+  const paragraphs =
+    [...document.querySelectorAll('[itemprop="articleBody"], article, main')]
+      .map(paragraphsIn)
+      .filter((ps) => ps.join('').length >= total * 0.6)
+      .sort((a, b) => a.join('').length - b.join('').length)[0] ?? all
+  const text = (paragraphs.length ? paragraphs.join('\n\n') : document.body.innerText).slice(0, MAX_CHARS)
+  const title =
+    document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.content ||
+    document.querySelector('h1')?.textContent?.trim() ||
+    document.title
+  return {url: location.href, source: location.hostname.replace(/^www\./, ''), title, text, favicon: favicon()}
+}
 
-  return response.ok ? text : Promise.reject(text)
+export default function initial() {
+  const listener = (
+    message: {type?: string},
+    _sender: unknown,
+    sendResponse: (r: unknown) => void
+  ) => {
+    if (message?.type === 'getArticle') sendResponse(readArticle())
+  }
+  chrome.runtime.onMessage.addListener(listener)
+  return () => chrome.runtime.onMessage.removeListener(listener)
 }

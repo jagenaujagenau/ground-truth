@@ -1,39 +1,17 @@
-<a href="https://extension.js.org" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Powered%20by%20%7C%20Extension.js-0971fe" alt="Powered by Extension.js" align="right" /></a>
+# Ground Truth
 
-# ground-news-clone
+Ground News style bias check for the article in your current tab, powered by [TypeSafe](https://docs.typesafe.ai) and built with [Extension.js](https://extension.js.org).
 
-> Adds a sidebar panel to the browser with a simple page.
+Every page you load is checked automatically: the toolbar icon turns into a Left / Center / Right stripe with an L, C, R or MIX badge (hover for the label). Pages with under 800 characters of paragraph text are skipped without an API call. To limit checks to specific sites, list their domains under **Settings → Sites** in the panel (subdomains included; empty = every site). Open the side panel to see a Left / Center / Right bias bar, piece type (news/analysis/opinion), topic, and how loaded the language is. All five judgments come from one TypeSafe `jev-latest` call (`src/typesafe.ts`).
 
-## Commands
+## Setup
 
-### dev
-
-Run the extension in development mode. Target a browser with `--browser`:
-
-```bash
-npm run dev
-npm run dev -- --browser=firefox
-npm run dev -- --browser=edge
+```sh
+cp .env.example .env   # set EXTENSION_PUBLIC_TYPESAFE_API_KEY
+npm install
+npm run dev            # Chromium with the extension loaded
+npm run build          # dist/chromium; build:firefox / build:edge also available
+node src/typesafe.test.ts && node src/domains.test.ts
 ```
 
-### build
-
-Build for production. Convenience scripts target each browser:
-
-```bash
-npm run build           # Chromium (default)
-npm run build:firefox
-npm run build:edge
-```
-
-### preview
-
-Preview the production build in the browser:
-
-```bash
-npm run preview
-```
-
-## Learn more
-
-[Extension.js docs](https://extension.js.org).
+The `.env` key is bundled into the build, so anyone with the build can read it. For shared builds, leave `.env` empty and paste a key under **Settings** in the panel (stored in `chrome.storage.local`).
