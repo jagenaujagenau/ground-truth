@@ -5,6 +5,23 @@ and the versions are the extension's own, as they appear in `src/manifest.json`.
 
 ## [Unreleased]
 
+### Changed
+
+- **Article classification is source-blind.** The classifier receives `{title, text}` and nothing
+  else: the publication, domain, URL, favicon and reputation never reach it, and the questions no
+  longer mention `source`. Previously the domain was in the state with an instruction to ignore it,
+  which the model did not honour — the same neutral story filed under jacobin.com picked up 29
+  points of "Lean Left", and a mildly right-leaning piece flipped from Center to Lean Right under
+  foxnews.com. Metadata still drives caching, rate limiting, favicons, the Sites list and the panel;
+  it stops at the service. Source-level analysis, if it ever arrives, stays a separate dimension:
+  no weighting, no combined score.
+
+### Added
+
+- `npm test` in `website/` asserts the payload carries only the content, and
+  `npm run eval:source-blind` checks the same article under four mastheads against the live model,
+  measuring its run-to-run noise first.
+
 ## [1.1.0] — 2026-09-18
 
 ### Added

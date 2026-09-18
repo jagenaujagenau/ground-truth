@@ -1,14 +1,28 @@
 // The extension's questions, verbatim from ../../../src/typesafe.ts. The site asks TypeSafe exactly
 // what the extension asks, so a URL read here and the same page read in the browser agree.
-export type Article = {
+/**
+ * What the classifier is allowed to see. Nothing in here says who published it.
+ *
+ * Article classification is source-blind: the publication's name, domain, URL, reputation and past
+ * classifications never reach the model. Told in words to ignore a domain it can see, the model
+ * still moves — a neutral wire story labelled jacobin.com picks up 29 points of "Lean Left" that
+ * the same words under an unknown domain do not. So the domain is not sent at all.
+ *
+ * (The text itself may still name the paper, quote its columnists or read like its house style.
+ * That is the article talking, and this change does not try to scrub it.)
+ */
+export type ArticleContent = {title: string; text: string}
+
+/** Who published it. For caching, favicons, the Sites list and the panel — never for judging. */
+export type ArticleMetadata = {
   url: string
   source: string
-  title: string
-  text: string
   favicon?: string
   /** A still to show with it, when the thing read was a video. */
   image?: string
 }
+
+export type Article = ArticleContent & ArticleMetadata
 
 type ScoreAnswer = {score: number; confidence: number; probabilities: Record<string, number>}
 type ChoiceAnswer = {choice: string; confidence: number; probabilities: Record<string, number>}
@@ -44,7 +58,7 @@ export const QUESTIONS = {
   lean: {
     type: 'score',
     instructions:
-      'Judge the political slant of how this article (`title` and `text`) frames its subject, based on framing, word choice, and which perspectives are included or left out. Judge the article itself, not what you know about `source`.',
+      'Judge the political slant of how this article (`title` and `text`) frames its subject, based on framing, word choice, and which perspectives are included or left out.',
     criteria: LEAN_LEVELS
   },
   loaded: {
@@ -82,15 +96,22 @@ export const QUESTIONS = {
   }
 } as const
 
+/**
+ * The whole state Jev ever receives. Destructuring is the guard: whatever an Article carries
+ * besides these two fields cannot reach the model through here, and this is the only place the
+ * payload is built. src/lib/typesafe.test.ts holds it to that.
+ */
+export const stateFor = ({title, text}: ArticleContent) => ({title, text})
+
 export async function analyze(
-  {url, source, title, text}: Article,
+  content: ArticleContent,
   apiKey: string,
   signal?: AbortSignal
 ): Promise<Analysis> {
   const res = await fetch('https://api.typesafe.ai/v1/systemone', {
     method: 'POST',
     headers: {Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json'},
-    body: JSON.stringify({model: 'jev-latest', state: {url, source, title, text}, questions: QUESTIONS}),
+    body: JSON.stringify({model: 'jev-latest', state: stateFor(content), questions: QUESTIONS}),
     signal
   })
   if (!res.ok) throw new Error(`TypeSafe ${res.status}: ${(await res.text()).slice(0, 200)}`)

@@ -21,7 +21,14 @@ Ground News style bias check for the article in your current tab.
 
 A browser extension that rates the political lean of whatever article you are reading. Every page you load is checked automatically: the toolbar icon becomes a Left / Center / Right stripe with an `L`, `C`, `R` or `MIX` badge, and the side panel shows the bias bar, piece type (news / analysis / opinion), topic, and how loaded the language is.
 
-All five judgments come from a single TypeSafe [`jev-latest`](https://docs.typesafe.ai) call. The extension doesn't make that call itself: it posts the article to a reading service — the one in [`website/`](website/), which holds the TypeSafe key — and gets the judgment back. So no key ships in the build, and the extension asks for no host permissions at all. Pages with under 800 characters of paragraph text are skipped before anything is sent, and results are cached per URL for the session. Built with [Extension.js](https://extension.js.org); builds for Chromium, Firefox and Edge.
+All five judgments come from a single TypeSafe [`jev-latest`](https://docs.typesafe.ai) call, and
+that call is **source-blind**: the model is given the article's title and text, never the
+publication, domain or URL. Told merely to ignore a masthead it can see, it doesn't — the same wire
+story filed under a partisan domain shifts by tens of points. So it isn't shown one. Caching,
+favicons and the Sites list still use the domain; it stops at the reading service. See
+[website/README.md](website/README.md#article-classification-is-source-blind).
+
+The extension doesn't make that call itself: it posts the article to a reading service — the one in [`website/`](website/), which holds the TypeSafe key — and gets the judgment back. So no key ships in the build, and the extension asks for no host permissions at all. Pages with under 800 characters of paragraph text are skipped before anything is sent, and results are cached per URL for the session. Built with [Extension.js](https://extension.js.org); builds for Chromium, Firefox and Edge.
 
 ## Quick Start
 

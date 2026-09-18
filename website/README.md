@@ -44,6 +44,45 @@ Some outlets refuse automated readers (AP and Politico return 403, for instance)
 carry too little prose to judge — both land in the panel's own error and empty states, which is what
 the extension does too.
 
+## Article classification is source-blind
+
+The classifier is given the article and nothing else:
+
+```js
+state: {title, text}
+```
+
+The publication's name, domain, URL, favicon, reputation and past classifications never reach it.
+That is a property of the code, not an instruction to the model: `stateFor()` in
+`src/lib/typesafe.ts` builds the payload by destructuring the two fields it is allowed to see, and
+it is the only place a payload is built. The questions no longer mention `source` either, because
+naming a field the state does not carry only invites the model to reason about something it cannot
+see.
+
+The reason is measurable. Told in words to ignore a domain it could see, the model still moved: the
+same neutral wire story filed under jacobin.com picked up 29 points of "Lean Left" that it did not
+have under an unknown domain, and a mildly right-leaning piece flipped from Center to Lean Right
+purely by being filed under foxnews.com.
+
+Everything else keeps the metadata. `url` and `source` still drive caching, rate limiting,
+favicons, the Sites allowlist and what the panel shows; they simply stop at the service.
+
+There is no weighting between source reputation and article classification, and there is no
+combined score. If source-level analysis is ever added it stays a separate dimension, and it must
+not touch the article-level distribution.
+
+Two checks hold the line:
+
+- `npm test` asserts the payload carries nothing but title and text, that two copies of an article
+  filed under opposite mastheads produce the same request, and that no question names `source`.
+- `npm run eval:source-blind` puts it to the live model: one article under foxnews.com,
+  nytimes.com, theguardian.com and jacobin.com. Since `jev-latest` is not deterministic — the
+  identical request comes back up to three points apart — the run first measures that noise with
+  repeated source-free reads, then requires every masthead to land on the same level within it.
+
+This is architectural blindness, not laundering: the article text may still name its paper, quote
+its columnists or read like its house style, and this change does not try to scrub that.
+
 ### The extension talks to it too
 
 `POST /api/analyze` takes either `{"url": "..."}` (the site, which then fetches the page) or
