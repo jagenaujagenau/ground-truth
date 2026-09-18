@@ -3,6 +3,7 @@ import en from './messages/en.json'
 import es from './messages/es.json'
 import fr from './messages/fr.json'
 import it from './messages/it.json'
+import pl from './messages/pl.json'
 import pt from './messages/pt.json'
 import {SITE, type SiteCopy} from './site'
 
@@ -13,7 +14,8 @@ export const LOCALES = [
   {code: 'de', name: 'Deutsch'},
   {code: 'fr', name: 'Français'},
   {code: 'it', name: 'Italiano'},
-  {code: 'pt', name: 'Português'}
+  {code: 'pt', name: 'Português'},
+  {code: 'pl', name: 'Polski'}
 ] as const
 
 export type Locale = (typeof LOCALES)[number]['code']
@@ -23,7 +25,7 @@ export const isLocale = (value: string): value is Locale =>
 
 // The panel's strings are the extension's own catalogs, copied by scripts/sync-extension.mjs.
 type Catalog = Record<string, {message: string}>
-const CATALOGS: Record<Locale, Catalog> = {en, es, de, fr, it, pt} as Record<Locale, Catalog>
+const CATALOGS: Record<Locale, Catalog> = {en, es, de, fr, it, pt, pl} as Record<Locale, Catalog>
 
 /** chrome.i18n.getMessage, for a page that has no chrome.i18n. */
 export type T = (key: string, ...subs: (string | number)[]) => string

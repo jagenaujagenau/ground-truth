@@ -1,0 +1,275 @@
+{
+  "extName": {
+    "message": "Ground Truth"
+  },
+  "extDescription": {
+    "message": "Analiza stronniczości dowolnego artykułu w stylu Ground News, na silniku TypeSafe."
+  },
+  "actionTitle": {
+    "message": "Otwórz Ground Truth"
+  },
+  "levelFarLeftShort": {
+    "message": "Skraj. L"
+  },
+  "levelFarLeft": {
+    "message": "Skrajna lewica"
+  },
+  "levelFarLeftBlurb": {
+    "message": "Cały tekst pisany z perspektywy progresywnej."
+  },
+  "levelLeftShort": {
+    "message": "Lewica"
+  },
+  "levelLeft": {
+    "message": "Raczej lewica"
+  },
+  "levelLeftBlurb": {
+    "message": "Dobór słów i źródeł przechyla się na stronę progresywną."
+  },
+  "levelCenterShort": {
+    "message": "Centrum"
+  },
+  "levelCenter": {
+    "message": "Centrum"
+  },
+  "levelCenterBlurb": {
+    "message": "Obie strony dochodzą do głosu, słownictwo pozostaje rzeczowe."
+  },
+  "levelRightShort": {
+    "message": "Prawica"
+  },
+  "levelRight": {
+    "message": "Raczej prawica"
+  },
+  "levelRightBlurb": {
+    "message": "Dobór słów i źródeł przechyla się na stronę konserwatywną."
+  },
+  "levelFarRightShort": {
+    "message": "Skraj. P"
+  },
+  "levelFarRight": {
+    "message": "Skrajna prawica"
+  },
+  "levelFarRightBlurb": {
+    "message": "Cały tekst pisany z perspektywy konserwatywnej."
+  },
+  "sideLeft": {
+    "message": "Lewica"
+  },
+  "sideCenter": {
+    "message": "Centrum"
+  },
+  "sideRight": {
+    "message": "Prawica"
+  },
+  "langNeutral": {
+    "message": "Neutralny"
+  },
+  "langNeutralBlurb": {
+    "message": "Rzeczowy, opisowy język; twierdzenia mają źródła."
+  },
+  "langSomewhat": {
+    "message": "Nieco nacechowany"
+  },
+  "langSomewhatBlurb": {
+    "message": "Gdzieniegdzie oceniający przymiotnik albo dramatyczne ujęcie."
+  },
+  "langHighly": {
+    "message": "Mocno nacechowany"
+  },
+  "langHighlyBlurb": {
+    "message": "Sensacyjny tytuł i emocjonalny język od początku do końca."
+  },
+  "cardFraming": {
+    "message": "Ujęcie"
+  },
+  "mixedFlag": {
+    "message": "Sygnały mieszane"
+  },
+  "mixedBlurb": {
+    "message": "Jedne fragmenty ciągną w lewo, inne w prawo. Warto mieć to na uwadze przy lekturze."
+  },
+  "cardSpectrum": {
+    "message": "Spektrum"
+  },
+  "spectrumHint": {
+    "message": "Szanse każdego odczytania"
+  },
+  "cardLanguage": {
+    "message": "Język"
+  },
+  "ctaTitle": {
+    "message": "Porównaj relacje"
+  },
+  "ctaBody": {
+    "message": "Zobacz, jak tę historię opisują inne redakcje"
+  },
+  "fineprint": {
+    "message": "Odczyt AI tego, jak napisano ten artykuł, a nie ocena $1. Na silniku TypeSafe."
+  },
+  "loadingTitle": {
+    "message": "Czytam artykuł"
+  },
+  "settingsTitle": {
+    "message": "Ustawienia"
+  },
+  "backAria": {
+    "message": "Wróć do artykułu"
+  },
+  "refreshAria": {
+    "message": "Przeanalizuj ponownie"
+  },
+  "notNewsTitle": {
+    "message": "To nie jest artykuł"
+  },
+  "notNewsBody": {
+    "message": "Ta strona w $1 nie czyta się ani jak wiadomość, ani jak opinia — nie ma tu czego oceniać."
+  },
+  "checkAgain": {
+    "message": "Sprawdź ponownie"
+  },
+  "pausedTitle": {
+    "message": "Wstrzymane na $1"
+  },
+  "pausedBody": {
+    "message": "Ground Truth czyta tylko witryny z Twojej listy. Dodaj tę, a zobaczysz, jak pisze o świecie."
+  },
+  "addSite": {
+    "message": "Dodaj $1"
+  },
+  "manageSites": {
+    "message": "Zarządzaj witrynami"
+  },
+  "emptyTitle": {
+    "message": "Tu nie ma czego czytać"
+  },
+  "emptyBody": {
+    "message": "Otwórz artykuł, resztą zajmie się Ground Truth."
+  },
+  "emptyNote": {
+    "message": "Karta była otwarta jeszcze przed instalacją? Odśwież stronę."
+  },
+  "notConnectedTitle": {
+    "message": "Jeszcze nie połączono"
+  },
+  "notConnectedBody": {
+    "message": "Ground Truth czyta artykuły przez usługę, którą wskazujesz. Podaj jej adres i zaczyna działać."
+  },
+  "notConnectedAction": {
+    "message": "Podaj adres"
+  },
+  "errorTitle": {
+    "message": "Nie udało się przeczytać tego artykułu"
+  },
+  "errorBody": {
+    "message": "Coś poszło nie tak przy analizie $1. Zwykle to chwilowe."
+  },
+  "tryAgain": {
+    "message": "Spróbuj ponownie"
+  },
+  "details": {
+    "message": "Szczegóły"
+  },
+  "sitesTitle": {
+    "message": "Witryny"
+  },
+  "sitesEvery": {
+    "message": "Wszystkie witryny"
+  },
+  "sitesOne": {
+    "message": "1 witryna"
+  },
+  "sitesMany": {
+    "message": "Witryny: $1"
+  },
+  "sitesBodyAll": {
+    "message": "Ground Truth czyta każdy artykuł, który otworzysz. Dodaj witryny, żeby ograniczyć go do nich."
+  },
+  "sitesBodySome": {
+    "message": "Ground Truth czyta artykuły tylko z tych witryn i ich subdomen."
+  },
+  "addSiteLabel": {
+    "message": "Dodaj witrynę"
+  },
+  "add": {
+    "message": "Dodaj"
+  },
+  "domainError": {
+    "message": "Wpisz domenę, na przykład nytimes.com"
+  },
+  "addCurrentSite": {
+    "message": "Dodaj bieżącą witrynę $1"
+  },
+  "removeSiteAria": {
+    "message": "Usuń $1"
+  },
+  "serviceTitle": {
+    "message": "Usługa czytająca"
+  },
+  "serviceConnected": {
+    "message": "Połączono"
+  },
+  "serviceNotSet": {
+    "message": "Nie ustawiono"
+  },
+  "serviceBody": {
+    "message": "Adres, pod który trafiają artykuły do przeczytania. Własny albo ten publikowany przez projekt."
+  },
+  "serviceLabel": {
+    "message": "Adres usługi"
+  },
+  "serviceError": {
+    "message": "Wpisz adres, na przykład https://groundtruth.click/api/analyze"
+  },
+  "save": {
+    "message": "Zapisz"
+  },
+  "privacyTitle": {
+    "message": "Prywatność"
+  },
+  "privacyBody": {
+    "message": "Panel wysyła tekst artykułu do powyższej usługi, a ta pyta TypeSafe. Wyniki zostają tylko na czas tej sesji przeglądarki."
+  },
+  "kindNews": {
+    "message": "Wiadomość"
+  },
+  "kindAnalysis": {
+    "message": "Analiza"
+  },
+  "kindOpinion": {
+    "message": "Opinia"
+  },
+  "topicPolitics": {
+    "message": "Polityka"
+  },
+  "topicWorld": {
+    "message": "Świat"
+  },
+  "topicBusiness": {
+    "message": "Gospodarka"
+  },
+  "topicTechnology": {
+    "message": "Technologia"
+  },
+  "topicHealth": {
+    "message": "Zdrowie"
+  },
+  "topicClimate": {
+    "message": "Klimat"
+  },
+  "topicSports": {
+    "message": "Sport"
+  },
+  "topicEntertainment": {
+    "message": "Kultura"
+  },
+  "topicOther": {
+    "message": "Inne"
+  },
+  "tooltip": {
+    "message": "Ground Truth: $1"
+  },
+  "mixedSuffix": {
+    "message": "$1 (sygnały mieszane)"
+  }
+}

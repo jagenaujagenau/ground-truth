@@ -38,8 +38,8 @@ current browser session, and sends articles only to the reading service you poin
 
 ### Languages
 
-The interface is available in English, Spanish, German, French, Italian and Portuguese, and
-follows the browser's own language setting. `default_locale` is `en`.
+The interface is available in English, Spanish, German, French, Italian, Portuguese and Polish,
+and follows the browser's own language setting. `default_locale` is `en`.
 
 ### Screenshots
 

@@ -512,4 +512,79 @@ const pt: SiteCopy = {
   errUnknown: 'Não foi possível ler essa página.'
 }
 
-export const SITE: Record<string, SiteCopy> = {en, es, de, fr, it, pt}
+const pl: SiteCopy = {
+  metaTitle: 'Ground Truth — zobacz, jak napisano artykuł, który czytasz',
+  metaDescription:
+    'Rozszerzenie do przeglądarki, które czyta artykuł z Twojej karty i pokazuje, w którą stronę się przechyla: lewo, centrum czy prawo, jak nacechowany jest język i czy to wiadomość, czy opinia.',
+  navDemo: 'Demo',
+  navGet: 'Zainstaluj',
+  tagline: 'Sprawdzenie stronniczości tego, co właśnie czytasz',
+  heroTitle: 'Zobacz, jak napisano artykuł, który czytasz.',
+  heroLede:
+    'Ground Truth staje obok artykułu i pokazuje, w którą stronę się przechyla, jak bardzo podnosi ton i czy masz przed sobą relację, czy czyjąś tezę. Podaj demo poniżej link i patrz, jak czyta tekst wybrany przez Ciebie.',
+  heroAdd: 'Dodaj do przeglądarki',
+  heroDemo: 'Zobacz, jak czyta',
+  simPlaceholder: 'Wklej link do artykułu',
+  simRead: 'Czytaj',
+  simTryOne: 'Albo weź jeden z tych:',
+  simBlankTitle: 'Wklej link do artykułu',
+  simBlankBody:
+    'Strona otworzy się tutaj, a Ground Truth przeczyta ją w panelu — dokładnie tak jak w Twojej przeglądarce.',
+  simCaption:
+    'Prawdziwe artykuły, czytane naprawdę: wklej dowolny link albo weź to, czym otwiera się dziś redakcja. Strona zostaje pobrana, tekst wyciągnięty i przeczytany przez TypeSafe — tymi samymi pięcioma pytaniami, które zadaje rozszerzenie. Nic o Tobie nie jest zapisywane, a liczba odczytów jest ograniczona, żeby demo się trzymało.',
+  simUrlLabel: 'Link do artykułu',
+  simNewTab: 'Nowa karta',
+  simPanelAria: 'Panel boczny Ground Truth',
+  simToggleAria: 'Pokaż lub ukryj panel Ground Truth',
+  simNothingTitle: 'Nie ma czego pokazać',
+  simOpenOriginal: 'Otwórz oryginał ↗',
+  simTranscript: 'Transkrypcja',
+  idleTitle: 'Nic jeszcze nie przeczytano',
+  idleBody: 'Wklej link do artykułu w pasku powyżej, a Ground Truth go przeczyta.',
+  featuresTitle: 'Robota, którą inaczej musisz wykonać sam',
+  featuresLede:
+    'Czyja to historia i jak Ci ją opowiadają? Zwykle wiesz to po czwartym akapicie. Tutaj nie musisz na niego czekać.',
+  feature1Title: 'Podział, nie etykieta',
+  feature1Body:
+    'Mało który artykuł jest z jednej bryły. Widzisz, jaka część czyta się z lewa, ze środka i z prawa, zamiast jednego wyroku na całość.',
+  feature2Title: 'Nic nie trzeba klikać',
+  feature2Body:
+    'Otwierasz artykuł i jest już przeczytany. Ikona na pasku pokazuje przechył jednym rzutem oka, resztę trzyma panel.',
+  feature3Title: 'Mówi, kiedy tekst się rozjeżdża',
+  feature3Body:
+    'Kiedy tekst ciągnie w obie strony, mówi to wprost, zamiast uśredniać i nazywać to równowagą.',
+  feature4Title: 'Odsyła gdzie indziej',
+  feature4Body:
+    'Jedno kliknięcie i masz tę samą historię opowiedzianą przez inne redakcje. To punkt wyjścia do sporu, nie wyrok.',
+  bandTitle: 'Nie ma dostępu do Twojej historii przeglądania.',
+  bandLede:
+    'Ground Truth czyta stronę, którą masz otwartą, i tylko po to, żeby odpowiedzieć na pytanie z ekranu. Nie ma konta, nic Twojego nie jest zapisywane, a to, co przeczytał, znika razem z przeglądarką. Sam decydujesz, na których witrynach działa: na wszystkich albo na krótkiej liście. Demo powyżej gra tak samo — pobiera link, który mu dajesz, i nie zostawia sobie nic więcej.',
+  bandCta: 'Dodaj do przeglądarki',
+  footerLine: 'Odczyt tego, jak napisano artykuł — nie ocena redakcji, która go opublikowała.',
+  footerPrivacy: 'Prywatność',
+  languageLabel: 'Język',
+  supportCta: 'Wesprzyj',
+  supportTitle: 'Wesprzyj Ground Truth',
+  supportBody:
+    'Każdy przeczytany artykuł kosztuje parę groszy w API, a demo jest za darmo. Jeśli Ci się przydaje, to właśnie trzyma je przy życiu.',
+  supportMonthly: 'Co miesiąc',
+  supportOnce: 'Jednorazowo',
+  supportDirect: 'Płatność bezpośrednia',
+  supportCrypto: 'Krypto',
+  supportCopy: 'Kopiuj adres',
+  supportCopied: 'Skopiowano',
+  supportClose: 'Zamknij',
+  supportThanks: 'Dzięki, że czytasz uważnie.',
+  errAddress: 'To nie wygląda na adres strony.',
+  errBlocked: 'Ta witryna nas odrzuciła — wiele redakcji blokuje automatycznych czytelników.',
+  errUnreachable: 'Nie udało się dotrzeć do tej witryny.',
+  errNotPage: 'Ten adres nie prowadzi do strony internetowej.',
+  errThin: 'Na tej stronie jest za mało tekstu, żeby coś przeczytać.',
+  errCaptions: 'To wideo nie ma napisów, więc nie ma czego czytać.',
+  errRate: 'Sporo artykułów pod rząd. Wróć za kilka minut.',
+  errDaily: 'Demo wyczerpało dzisiejszy limit odczytów. Jutro zaczyna od nowa.',
+  errService: 'Samo czytanie się nie powiodło. Zwykle to chwilowe.',
+  errUnknown: 'Nie udało się przeczytać tej strony.'
+}
+
+export const SITE: Record<string, SiteCopy> = {en, es, de, fr, it, pt, pl}

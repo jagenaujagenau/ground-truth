@@ -17,7 +17,7 @@ export default defineConfig({
   // sitemap-index.xml, with the six languages cross-referenced as alternates.
   integrations: [
     sitemap({
-      i18n: {defaultLocale: 'en', locales: {en: 'en', es: 'es', de: 'de', fr: 'fr', it: 'it', pt: 'pt'}}
+      i18n: {defaultLocale: 'en', locales: {en: 'en', es: 'es', de: 'de', fr: 'fr', it: 'it', pt: 'pt', pl: 'pl'}}
     })
   ],
   // The extension calls /api/analyze from whatever page you are reading. The route sets its own
@@ -28,7 +28,7 @@ export default defineConfig({
   // English lives at /, the rest under /es/, /de/ and so on.
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'es', 'de', 'fr', 'it', 'pt'],
+    locales: ['en', 'es', 'de', 'fr', 'it', 'pt', 'pl'],
     routing: {prefixDefaultLocale: false}
   },
   env: {

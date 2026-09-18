@@ -128,11 +128,11 @@ the two never drift. `npm run og` redraws them with whatever Chrome it finds (`C
 overrides); they are committed, so a build never needs a browser. The same script draws
 `apple-touch-icon.png` from `mark.svg`.
 
-## Six languages
+## Seven languages
 
-The page is published in English, Spanish, German, French, Italian and Portuguese. English sits at
-`/`, the rest under `/es/`, `/de/`, `/fr/`, `/it/`, `/pt/`, with `hreflang` alternates and a
-switcher in the header.
+The page is published in English, Spanish, German, French, Italian, Portuguese and Polish. English
+sits at `/`, the rest under `/es/`, `/de/`, `/fr/`, `/it/`, `/pt/`, `/pl/`, with `hreflang`
+alternates and a switcher in the header.
 
 The site's own copy is `src/i18n/site.ts`. Spanish is Rioplatense and Portuguese is European, and every language is written on its own terms rather than translated phrase by phrase — so the headline, for instance, lands differently in each. The panel's copy is **not** — it comes from the
 extension's catalogs, copied in by `npm run sync` alongside `panel.css`, so a string reads the same

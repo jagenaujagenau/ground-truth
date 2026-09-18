@@ -52,7 +52,7 @@ To limit checks to specific sites, list their domains under **Settings → Sites
 
 ## Languages
 
-The panel speaks English, Spanish, German, French, Italian and Portuguese, and follows your browser's language on its own — there is no setting. The Spanish is Rioplatense (voseo: *agregá*, *pegá*, *elegís*) and the Portuguese is European; each catalog is written as that language would put it, not translated line by line from the English. Every string lives in [`_locales/<lang>/messages.json`](_locales); `src/i18n.test.ts` fails the build if a catalog drifts from `en`, if a key the code asks for is missing, or if a string is defined and never used. The website ships the same catalogs, so the panel reads identically in both.
+The panel speaks English, Spanish, German, French, Italian, Portuguese and Polish, and follows your browser's language on its own — there is no setting. The Spanish is Rioplatense (voseo: *agregá*, *pegá*, *elegís*) and the Portuguese is European; each catalog is written as that language would put it, not translated line by line from the English. Every string lives in [`_locales/<lang>/messages.json`](_locales); `src/i18n.test.ts` fails the build if a catalog drifts from `en`, if a key the code asks for is missing, or if a string is defined and never used. The website ships the same catalogs, so the panel reads identically in both.
 
 ## How it works
 

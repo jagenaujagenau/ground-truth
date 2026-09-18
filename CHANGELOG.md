@@ -18,6 +18,8 @@ and the versions are the extension's own, as they appear in `src/manifest.json`.
 
 ### Added
 
+- **Polish.** A seventh language, panel and site, with its own example papers — OKO.press, Onet,
+  RMF24 and Do Rzeczy.
 - `npm test` in `website/` asserts the payload carries only the content, and
   `npm run eval:source-blind` checks the same article under four mastheads against the live model,
   measuring its run-to-run noise first.

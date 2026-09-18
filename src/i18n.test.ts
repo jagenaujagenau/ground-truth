@@ -7,7 +7,7 @@ const read = (code: string) =>
   JSON.parse(readFileSync(join(LOCALES, code, 'messages.json'), 'utf8')) as Record<string, {message: string}>
 
 const codes = readdirSync(LOCALES).sort()
-assert.deepEqual(codes, ['de', 'en', 'es', 'fr', 'it', 'pt'])
+assert.deepEqual(codes, ['de', 'en', 'es', 'fr', 'it', 'pl', 'pt'])
 
 const en = read('en')
 const placeholders = (m: string) => (m.match(/\$\d/g) ?? []).sort().join('')

@@ -116,6 +116,12 @@ export const OUTLETS: Record<string, Outlet[]> = {
       feed: 'https://www.ansa.it/sito/notizie/politica/politica_rss.xml'
     }
   ],
+  pl: [
+    {id: 'okopress', label: 'OKO.press', site: 'oko.press', feed: 'https://oko.press/feed'},
+    {id: 'onet', label: 'Onet', site: 'onet.pl', feed: 'https://wiadomosci.onet.pl/.feed'},
+    {id: 'rmf24', label: 'RMF24', site: 'rmf24.pl', feed: 'https://www.rmf24.pl/fakty/feed'},
+    {id: 'dorzeczy', label: 'Do Rzeczy', site: 'dorzeczy.pl', feed: 'https://dorzeczy.pl/rss'}
+  ],
   pt: [
     {
       id: 'observador',
