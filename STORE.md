@@ -133,4 +133,6 @@ a few seconds.
 
 ## Version history
 
+See [CHANGELOG.md](CHANGELOG.md) for the full list.
+
 - 1.0.0 (unreleased): initial version. Not yet submitted to any store.

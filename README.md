@@ -99,6 +99,7 @@ tsconfig.json
 | [`src/background.ts`](src/background.ts) | The per-tab check loop: extraction, filtering, caching, icon painting |
 | [`src/manifest.json`](src/manifest.json) | Permissions and per-browser manifest keys |
 | [`_locales/`](_locales) | The six message catalogs; `default_locale` is `en` |
+| [`CHANGELOG.md`](CHANGELOG.md) | What changed in each version; releases are tagged `v<version>` |
 | [`STORE.md`](STORE.md) | Store listing copy, permission justifications and reviewer notes |
 | [TypeSafe docs](https://docs.typesafe.ai) | The System One API behind the judgments |
 | [Extension.js docs](https://extension.js.org) | Build tooling and browser targets |
