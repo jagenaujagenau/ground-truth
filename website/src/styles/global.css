@@ -299,10 +299,32 @@ a {
   line-height: 1.45;
   color: var(--ink-2);
   text-align: left;
+  white-space: nowrap;
 }
 /* On the text itself: as an anonymous box inside the flex, wrapping rules would not reach it. */
 .tagline span {
   text-wrap: balance;
+}
+
+/*
+ * A chip that wraps stops being a chip: it reads as a box of text with a ragged edge, and the two
+ * lines sit oddly against a border built for one. Every language fits on one line down to 520px,
+ * so below that the chrome comes off and the line becomes what it always was underneath — a
+ * caption over the headline.
+ */
+@media (max-width: 520px) {
+  .tagline {
+    /* Block, not flex: the mark then sits in the run of text instead of beside a centred column. */
+    display: block;
+    padding: 0;
+    border: 0;
+    white-space: normal;
+    text-align: center;
+  }
+  .tagline svg {
+    display: inline-block;
+    margin: 0 5px -4px 0;
+  }
 }
 .tagline svg {
   flex: none;
