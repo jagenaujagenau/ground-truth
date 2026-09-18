@@ -9,18 +9,20 @@ policy describes exactly what it does with your data.
 
 When you open a page that Ground Truth checks, it extracts the page's title, its
 paragraph text (up to 6,000 characters), the page URL and the site's domain, and
-sends them to the TypeSafe API at `https://api.typesafe.ai` to be analyzed. That
-request carries your TypeSafe API key so TypeSafe can attribute it to your account.
+sends them to the reading service configured under **Settings → Reading service**.
+That service asks the TypeSafe API at `https://api.typesafe.ai` to analyze them and
+returns the judgment. No credential of yours is involved: the key belongs to whoever
+runs the service.
 
 Nothing else leaves your device. There is no analytics, no telemetry, no
-advertising, and no tracking of any kind. The developer of Ground Truth operates no
-server and receives no data about you or the pages you visit.
+advertising, and no tracking of any kind. You choose the service, so you choose who
+receives that article text — run your own and the answer is nobody but you.
 
 ## What is stored on your device
 
 - **Analysis results and extracted article text** are kept in `chrome.storage.session`
   and are erased when you close the browser.
-- **Your list of sites, your API key (if you paste one) and cached site icons** are kept
+- **Your list of sites, the reading service address and cached site icons** are kept
   in `chrome.storage.local` and stay on your device until you remove them or uninstall
   the extension.
 
@@ -38,9 +40,9 @@ are analyzed and everything else is ignored. Pages you never open are never touc
 
 ## Third-party processing
 
-Article text is processed by TypeSafe, which operates under its own terms and privacy
-policy: https://typesafe.ai. Your use of Ground Truth is subject to those terms, because
-your own TypeSafe API key makes the request.
+Article text is passed to TypeSafe by the reading service, and TypeSafe operates under
+its own terms and privacy policy: https://typesafe.ai. The operator of the service you
+point Ground Truth at also sees the article text you send it.
 
 ## Data sharing and sale
 
@@ -51,7 +53,7 @@ front of you.
 ## Removing your data
 
 Uninstalling the extension deletes everything it stored. You can also clear the site list
-and API key at any time under **Settings** in the panel.
+and the service address at any time under **Settings** in the panel.
 
 ## Contact
 

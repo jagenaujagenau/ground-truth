@@ -34,7 +34,12 @@ You stay in control of what it reads. By default it checks every news story you
 open; add domains under Settings and it checks only those sites. Pages without
 enough article text are skipped before anything is sent. Ground Truth requests no
 access to your browsing history or your tab list, stores results only for the
-current browser session, and runs on your own TypeSafe API key.
+current browser session, and sends articles only to the reading service you point it at.
+
+### Languages
+
+The interface is available in English, Spanish, German, French, Italian and Portuguese, and
+follows the browser's own language setting. `default_locale` is `en`.
 
 ### Screenshots
 
@@ -49,10 +54,10 @@ Store icon: `src/images/icon-128.png` (128x128).
 ## Privacy and data use
 
 - Ground Truth transmits the page title, paragraph text (up to 6,000 characters),
-  URL and domain of pages you open to the TypeSafe API for analysis. Nothing else
-  leaves the device, and the developer operates no server.
+  URL and domain of pages you open to the reading service configured in the extension,
+  which passes them to the TypeSafe API for analysis. Nothing else leaves the device.
 - Results and article text live in `chrome.storage.session` (erased when the browser
-  closes). The site list, the optional API key and cached favicons live in
+  closes). The site list, the service address and cached favicons live in
   `chrome.storage.local`.
 - No analytics, no telemetry, no advertising, no tracking, no data sale.
 - The Firefox manifest declares `data_collection_permissions: ["websiteContent"]`,
@@ -82,10 +87,10 @@ it is framed politically.
 
 - `sidePanel`: Renders the analysis — bias bar, spectrum, piece type, topic and
   language meter — in the browser side panel, which is the extension's main interface.
-- `storage`: Stores the user's site list and optional API key (`storage.local`), and
-  the per-tab analysis results that the panel renders (`storage.session`).
-- Host permission `https://api.typesafe.ai/*`: The single endpoint the extension calls
-  to analyze an article. No other host is contacted.
+- `storage`: Stores the user's site list and the reading service address (`storage.local`),
+  and the per-tab analysis results that the panel renders (`storage.session`).
+- No host permissions: the extension calls one configured service endpoint, which allows
+  the request with CORS. No other host is contacted.
 - Content script on `<all_urls>`: The user can open a news article on any site, and the
   content script is what reads that page's title and paragraph text. It is a passive
   message responder — it extracts text only when the extension asks, and only for the
@@ -95,17 +100,20 @@ it is framed politically.
 
 ### Reviewer notes
 
-The extension needs a TypeSafe API key to return results. Paste a working key into the
-"Test credentials" field at submission, or the reviewer will only see the "Connect
-TypeSafe" screen. To exercise it: install, open any news article (for example an NPR or
-Reuters story), wait a few seconds for the toolbar icon to show a Left / Center / Right
-stripe, then click the icon to open the side panel.
+The extension needs the address of a reading service to return results; the submitted
+build has one bundled, so nothing needs pasting. If a build without one is under review,
+the address goes in "Test credentials" and is entered under Settings → Reading service,
+or the reviewer will only see the "Not connected yet" screen. To exercise it: install,
+open any news article (for example an NPR or Reuters story), wait a few seconds for the
+toolbar icon to show a Left / Center / Right stripe, then click the icon to open the side
+panel.
 
 ## Firefox Add-ons
 
 ### Reviewer notes
 
-Needs a TypeSafe API key, entered under Settings in the sidebar panel. The build is
+Needs the reading service address, bundled in the submitted build or entered under
+Settings → Reading service in the sidebar panel. The build is
 bundled, so AMO requires a source archive: install with `npm install`, build with
 `npm run build:firefox`, and the `dist/firefox` output matches the upload. Node 20+ and
 npm 11 were used for the submitted build.
@@ -118,9 +126,10 @@ Initial release.
 
 ### Certification notes
 
-Same as the Chrome reviewer notes above: the extension requires a TypeSafe API key,
-which can be pasted under Settings in the side panel. Open any news article and the
-toolbar icon shows the Left / Center / Right stripe within a few seconds.
+Same as the Chrome reviewer notes above: the extension reads through a service whose
+address is bundled in the build, and can also be set under Settings in the side panel.
+Open any news article and the toolbar icon shows the Left / Center / Right stripe within
+a few seconds.
 
 ## Version history
 
