@@ -1,6 +1,7 @@
 # Ground Truth — website
 
-The site for the [Ground Truth](../README.md) extension. The page is static; one server route does
+The site for the [Ground Truth](../README.md) extension, live at
+[groundtruth.click](https://groundtruth.click). The page is static; one server route does
 the reading, so the demo works on whatever article a visitor hands it.
 
 ```sh

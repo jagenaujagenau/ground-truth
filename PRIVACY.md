@@ -9,9 +9,12 @@ policy describes exactly what it does with your data.
 
 When you open a page that Ground Truth checks, it extracts the page's title, its
 paragraph text (up to 6,000 characters), the page URL and the site's domain, and
-sends them to the reading service configured under **Settings → Reading service**.
-That service asks the TypeSafe API at `https://api.typesafe.ai` to analyze them and
-returns the judgment. No credential of yours is involved: the key belongs to whoever
+sends them to the reading service the build is pointed at, which you can change under
+**Settings → Reading service**. Published builds point at `https://groundtruth.click`,
+run by the developer of Ground Truth. That service asks the TypeSafe API at
+`https://api.typesafe.ai` to analyze them and returns the judgment. It keeps the
+result in memory for a few hours so the same article is not re-read, and keeps
+nothing else. No credential of yours is involved: the key belongs to whoever
 runs the service.
 
 Nothing else leaves your device. There is no analytics, no telemetry, no

@@ -219,7 +219,7 @@
     "message": "Adresse du service"
   },
   "serviceError": {
-    "message": "Saisissez une adresse, par exemple https://exemple.com/api/analyze"
+    "message": "Saisissez une adresse, par exemple https://groundtruth.click/api/analyze"
   },
   "save": {
     "message": "Enregistrer"

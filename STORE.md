@@ -101,7 +101,7 @@ it is framed politically.
 ### Reviewer notes
 
 The extension needs the address of a reading service to return results; the submitted
-build has one bundled, so nothing needs pasting. If a build without one is under review,
+build points at https://groundtruth.click/api/analyze, so nothing needs pasting. If a build without one is under review,
 the address goes in "Test credentials" and is entered under Settings → Reading service,
 or the reviewer will only see the "Not connected yet" screen. To exercise it: install,
 open any news article (for example an NPR or Reuters story), wait a few seconds for the

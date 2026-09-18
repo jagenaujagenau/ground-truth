@@ -219,7 +219,7 @@
     "message": "Dirección del servicio"
   },
   "serviceError": {
-    "message": "Escribí una dirección, por ejemplo https://ejemplo.com/api/analyze"
+    "message": "Escribí una dirección, por ejemplo https://groundtruth.click/api/analyze"
   },
   "save": {
     "message": "Guardar"

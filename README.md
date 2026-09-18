@@ -26,13 +26,13 @@ All five judgments come from a single TypeSafe [`jev-latest`](https://docs.types
 ## Quick Start
 
 ```sh
-cp .env.example .env   # set EXTENSION_PUBLIC_API_URL, e.g. https://example.com/api/analyze
+cp .env.example .env   # set EXTENSION_PUBLIC_API_URL, e.g. https://groundtruth.click/api/analyze
 npm install
 npm run dev            # Chromium with the extension loaded
 ```
 
-Need a service to point at? `website/` is one: `cd website && npm install && npm run build && npm start`
-gives you `http://localhost:4351/api/analyze` (see [website/README.md](website/README.md)).
+The project runs one at `https://groundtruth.click/api/analyze`, which is what the published builds
+point at. To run your own, the site in [`website/`](website/) is that service.
 
 ```sh
 npm run build          # dist/chromium; build:firefox and build:edge also available

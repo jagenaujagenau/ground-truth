@@ -264,7 +264,7 @@ function settings() {
       <p class="group-body">${t('serviceBody')}</p>
       <form class="field-row" data-form="url" novalidate>
         <label class="sr-only" for="service">${t('serviceLabel')}</label>
-        <input id="service" name="service" type="url" autocomplete="off" spellcheck="false" placeholder="https://example.com/api/analyze" aria-describedby="service-error" />
+        <input id="service" name="service" type="url" autocomplete="off" spellcheck="false" placeholder="https://groundtruth.click/api/analyze" aria-describedby="service-error" />
         <button class="btn btn-primary" type="submit">${t('save')}</button>
       </form>
       <p class="field-error" id="service-error" role="alert"></p>
