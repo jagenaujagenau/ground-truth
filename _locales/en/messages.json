@@ -1,0 +1,275 @@
+{
+  "extName": {
+    "message": "Ground Truth"
+  },
+  "extDescription": {
+    "message": "Ground News style bias check for any article, powered by TypeSafe."
+  },
+  "actionTitle": {
+    "message": "Open Ground Truth"
+  },
+  "levelFarLeftShort": {
+    "message": "Far L"
+  },
+  "levelFarLeft": {
+    "message": "Far Left"
+  },
+  "levelFarLeftBlurb": {
+    "message": "Consistently framed from a progressive viewpoint."
+  },
+  "levelLeftShort": {
+    "message": "Left"
+  },
+  "levelLeft": {
+    "message": "Lean Left"
+  },
+  "levelLeftBlurb": {
+    "message": "Word choice and sourcing tilt toward progressive views."
+  },
+  "levelCenterShort": {
+    "message": "Center"
+  },
+  "levelCenter": {
+    "message": "Center"
+  },
+  "levelCenterBlurb": {
+    "message": "Balanced framing with neutral word choice."
+  },
+  "levelRightShort": {
+    "message": "Right"
+  },
+  "levelRight": {
+    "message": "Lean Right"
+  },
+  "levelRightBlurb": {
+    "message": "Word choice and sourcing tilt toward conservative views."
+  },
+  "levelFarRightShort": {
+    "message": "Far R"
+  },
+  "levelFarRight": {
+    "message": "Far Right"
+  },
+  "levelFarRightBlurb": {
+    "message": "Consistently framed from a conservative viewpoint."
+  },
+  "sideLeft": {
+    "message": "Left"
+  },
+  "sideCenter": {
+    "message": "Center"
+  },
+  "sideRight": {
+    "message": "Right"
+  },
+  "langNeutral": {
+    "message": "Neutral"
+  },
+  "langNeutralBlurb": {
+    "message": "Plain, descriptive wording with attributed claims."
+  },
+  "langSomewhat": {
+    "message": "Somewhat loaded"
+  },
+  "langSomewhatBlurb": {
+    "message": "Some charged adjectives or dramatic framing."
+  },
+  "langHighly": {
+    "message": "Highly loaded"
+  },
+  "langHighlyBlurb": {
+    "message": "Sensational, emotionally charged wording throughout."
+  },
+  "cardFraming": {
+    "message": "Framing"
+  },
+  "mixedFlag": {
+    "message": "Mixed signals"
+  },
+  "mixedBlurb": {
+    "message": "Parts of the framing tilt each way. Worth reading with both lenses."
+  },
+  "cardSpectrum": {
+    "message": "Spectrum"
+  },
+  "spectrumHint": {
+    "message": "How likely each reading is"
+  },
+  "cardLanguage": {
+    "message": "Language"
+  },
+  "ctaTitle": {
+    "message": "Compare coverage"
+  },
+  "ctaBody": {
+    "message": "See how other outlets report this story"
+  },
+  "fineprint": {
+    "message": "An AI read of this article’s framing, not a rating of $1. Powered by TypeSafe."
+  },
+  "loadingTitle": {
+    "message": "Reading the framing"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "backAria": {
+    "message": "Back to article"
+  },
+  "refreshAria": {
+    "message": "Analyze again"
+  },
+  "notNewsTitle": {
+    "message": "Not a news story"
+  },
+  "notNewsBody": {
+    "message": "This page on $1 doesn’t read like news or opinion, so there’s no framing to rate."
+  },
+  "checkAgain": {
+    "message": "Check again"
+  },
+  "pausedTitle": {
+    "message": "Paused on $1"
+  },
+  "pausedBody": {
+    "message": "Ground Truth only reads sites on your list. Add this one to see how its stories are framed."
+  },
+  "addSite": {
+    "message": "Add $1"
+  },
+  "manageSites": {
+    "message": "Manage sites"
+  },
+  "emptyTitle": {
+    "message": "Nothing to read here"
+  },
+  "emptyBody": {
+    "message": "Open a news story and Ground Truth reads its framing automatically."
+  },
+  "emptyNote": {
+    "message": "Tab open since before installing? Reload the page."
+  },
+  "notConnectedTitle": {
+    "message": "Not connected yet"
+  },
+  "notConnectedBody": {
+    "message": "Ground Truth reads articles through a service you point it at. Add its address and it starts working."
+  },
+  "notConnectedAction": {
+    "message": "Add the address"
+  },
+  "errorTitle": {
+    "message": "Couldn’t read this story"
+  },
+  "errorBody": {
+    "message": "Something went wrong analyzing $1. It’s usually temporary."
+  },
+  "tryAgain": {
+    "message": "Try again"
+  },
+  "details": {
+    "message": "Details"
+  },
+  "sitesTitle": {
+    "message": "Sites"
+  },
+  "sitesEvery": {
+    "message": "Every site"
+  },
+  "sitesOne": {
+    "message": "1 site"
+  },
+  "sitesMany": {
+    "message": "$1 sites"
+  },
+  "sitesBodyAll": {
+    "message": "Ground Truth reads every news story you open. Add sites to limit it to just those."
+  },
+  "sitesBodySome": {
+    "message": "Ground Truth reads articles only on these sites and their subdomains."
+  },
+  "addSiteLabel": {
+    "message": "Add a site"
+  },
+  "add": {
+    "message": "Add"
+  },
+  "domainError": {
+    "message": "Enter a domain like nytimes.com"
+  },
+  "addCurrentSite": {
+    "message": "Add current site $1"
+  },
+  "removeSiteAria": {
+    "message": "Remove $1"
+  },
+  "serviceTitle": {
+    "message": "Reading service"
+  },
+  "serviceConnected": {
+    "message": "Connected"
+  },
+  "serviceNotSet": {
+    "message": "Not set"
+  },
+  "serviceBody": {
+    "message": "The address articles are sent to for reading. Run your own or point at the one the project publishes."
+  },
+  "serviceLabel": {
+    "message": "Service address"
+  },
+  "serviceError": {
+    "message": "Enter an address like https://example.com/api/analyze"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "privacyTitle": {
+    "message": "Privacy"
+  },
+  "privacyBody": {
+    "message": "Article text is sent to the reading service above, which asks TypeSafe. Results are kept only for this browser session."
+  },
+  "kindNews": {
+    "message": "News"
+  },
+  "kindAnalysis": {
+    "message": "Analysis"
+  },
+  "kindOpinion": {
+    "message": "Opinion"
+  },
+  "topicPolitics": {
+    "message": "Politics"
+  },
+  "topicWorld": {
+    "message": "World"
+  },
+  "topicBusiness": {
+    "message": "Business"
+  },
+  "topicTechnology": {
+    "message": "Technology"
+  },
+  "topicHealth": {
+    "message": "Health"
+  },
+  "topicClimate": {
+    "message": "Climate"
+  },
+  "topicSports": {
+    "message": "Sports"
+  },
+  "topicEntertainment": {
+    "message": "Culture"
+  },
+  "topicOther": {
+    "message": "Other"
+  },
+  "tooltip": {
+    "message": "Ground Truth: $1"
+  },
+  "mixedSuffix": {
+    "message": "$1 (mixed signals)"
+  }
+}
