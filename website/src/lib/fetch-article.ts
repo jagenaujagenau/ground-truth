@@ -1,7 +1,7 @@
 import {parseHTML} from 'linkedom'
 import dns from 'node:dns/promises'
 import net from 'node:net'
-import type {Article} from './typesafe'
+import type {Article} from './typesafe.ts'
 
 /** Same ceilings the extension's content script works to. */
 const MAX_CHARS = 6000
@@ -13,14 +13,15 @@ const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36 GroundTruth/1.0 (+https://github.com/jagenaujagenau/ground-truth)'
 
 /** What went wrong, as a code the caller can word in its own language. */
-export type ReadCode = 'address' | 'blocked' | 'unreachable' | 'notpage' | 'thin'
+export type ReadCode = 'address' | 'blocked' | 'unreachable' | 'notpage' | 'thin' | 'captions'
 
 export class ReadError extends Error {
-  constructor(
-    readonly kind: ReadCode,
-    message: string
-  ) {
+  // Written out rather than a constructor parameter property, so node can run these files directly.
+  readonly kind: ReadCode
+
+  constructor(kind: ReadCode, message: string) {
     super(message)
+    this.kind = kind
   }
 }
 

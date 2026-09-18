@@ -1,5 +1,6 @@
 import type {APIRoute} from 'astro'
 import {fetchArticle, MIN_CHARS, ReadError, safeUrl} from '../../lib/fetch-article'
+import {fetchVideo, youtubeId} from '../../lib/youtube'
 import {analyze, type Analysis, type Article} from '../../lib/typesafe'
 import {DAILY_READ_LIMIT, EXTENSION_PUBLIC_TYPESAFE_API_KEY, TYPESAFE_API_KEY} from 'astro:env/server'
 
@@ -75,7 +76,13 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
   if (!API_KEY)
     return fail(503, 'error', 'service', 'This site has no TypeSafe key configured, so it can’t read anything.')
 
-  const body = (await request.json().catch(() => ({}))) as {url?: unknown; article?: unknown}
+  const body = (await request.json().catch(() => ({}))) as {
+    url?: unknown
+    article?: unknown
+    lang?: unknown
+    force?: unknown
+  }
+  const lang = typeof body.lang === 'string' ? body.lang.slice(0, 5) : undefined
 
   // The extension sends the article it already has: it read the page in the tab, which beats
   // anything this server could fetch. The site sends a URL and the fetching happens here.
@@ -87,12 +94,13 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
   // Posted text is keyed by what was actually read, not just the address: two people on the same
   // live-blog URL, or the same URL an hour apart, are not looking at the same article.
   const key = url.trim().replace(/#.*$/, '') + (sent ? `#${fingerprint(sent.text)}` : '')
-  const hit = cached(key)
+  // Refresh in the panel means read it again, not hand back what is already in memory.
+  const hit = body.force === true ? undefined : cached(key)
   if (hit) return json({status: 'done', cached: true, ...hit})
 
   // Only a URL this server will go and fetch has to be checked; a posted article is already read,
   // so nothing here reaches out. The check runs before the rate limit, so a typo costs no one a read.
-  if (!sent) {
+  if (!sent && !youtubeId(key)) {
     try {
       await safeUrl(key)
     } catch (e) {
@@ -108,11 +116,13 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
     return fail(429, 'error', 'daily', 'The demo has hit its reading limit for today. It resets tomorrow.')
 
   let article: Article
+  const video = sent ? undefined : youtubeId(key)
   if (sent) {
     article = sent
   } else {
     try {
-      article = await fetchArticle(key)
+      // A YouTube page is all chrome and no prose; the words are in the caption track.
+      article = video ? await fetchVideo(video, lang) : await fetchArticle(key)
     } catch (e) {
       if (e instanceof ReadError)
         return json({status: e.kind === 'thin' ? 'empty' : 'error', code: e.kind, message: e.message}, 200)

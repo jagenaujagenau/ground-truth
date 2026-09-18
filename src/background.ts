@@ -151,7 +151,7 @@ async function check(tabId: number, force = false) {
   const article = await getArticle(tabId)
   if (article?.favicon) rememberFavicon(article.source, article.favicon)
   if (article && !isAllowed(article.source, await getDomains())) return save({status: 'off', article})
-  if (!article || article.text.length < MIN_CHARS) return save({status: 'empty'})
+  if (!article || (!article.video && article.text.length < MIN_CHARS)) return save({status: 'empty'})
   const endpoint = await apiUrl()
   if (!endpoint) return save({status: 'nourl'})
 

@@ -12,7 +12,19 @@ function favicon() {
   return best?.href
 }
 
+/** A watch page carries no prose: its words are in the caption track, which the service fetches. */
+function isVideo() {
+  if (!/(^|\.)youtube\.com$/.test(location.hostname)) return false
+  return Boolean(new URLSearchParams(location.search).get('v')) || /^\/(shorts|live)\//.test(location.pathname)
+}
+
 function readArticle() {
+  if (isVideo()) {
+    const title =
+      document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.content || document.title
+    return {url: location.href, source: 'youtube.com', title, text: '', video: true, favicon: favicon()}
+  }
+
   // The first <article> is often a widget (e.g. a radio player): use the tightest container
   // holding most of the page's prose, falling back to the whole body.
   const all = paragraphsIn(document.body)

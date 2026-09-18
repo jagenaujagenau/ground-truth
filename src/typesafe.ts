@@ -1,4 +1,12 @@
-export type Article = {url: string; source: string; title: string; text: string; favicon?: string}
+export type Article = {
+  url: string
+  source: string
+  title: string
+  text: string
+  favicon?: string
+  /** A video: the service reads its transcript, so there is no text to send. */
+  video?: boolean
+}
 
 type ScoreAnswer = {score: number; confidence: number; probabilities: Record<string, number>}
 type ChoiceAnswer = {choice: string; confidence: number; probabilities: Record<string, number>}
@@ -16,13 +24,17 @@ export type Analysis = {
  * both live on the service (see website/src/lib/typesafe.ts), so nothing secret ships in the build.
  */
 export async function analyze(
-  {url, source, title, text}: Article,
+  {url, source, title, text, video}: Article,
   endpoint: string
 ): Promise<Analysis> {
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({article: {url, source, title, text}})
+    // A page we could read, we send. A video we hand over by address: its words are captions, and
+    // fetching those is the service's job.
+    body: JSON.stringify(
+      video ? {url, lang: chrome.i18n.getUILanguage()} : {article: {url, source, title, text}}
+    )
   })
   if (!res.ok) throw new Error(`Reading service ${res.status}: ${(await res.text()).slice(0, 200)}`)
   const data = (await res.json()) as {analysis?: Analysis; message?: string}

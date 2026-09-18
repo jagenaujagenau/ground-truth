@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "sync": "node scripts/sync-extension.mjs",
-    "og": "node scripts/og-images.mjs"
+    "og": "node scripts/og-images.mjs",
+    "test": "node src/lib/youtube.test.ts"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.6",

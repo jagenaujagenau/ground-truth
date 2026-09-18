@@ -1,6 +1,14 @@
 // The extension's questions, verbatim from ../../../src/typesafe.ts. The site asks TypeSafe exactly
 // what the extension asks, so a URL read here and the same page read in the browser agree.
-export type Article = {url: string; source: string; title: string; text: string; favicon?: string}
+export type Article = {
+  url: string
+  source: string
+  title: string
+  text: string
+  favicon?: string
+  /** A still to show with it, when the thing read was a video. */
+  image?: string
+}
 
 type ScoreAnswer = {score: number; confidence: number; probabilities: Record<string, number>}
 type ChoiceAnswer = {choice: string; confidence: number; probabilities: Record<string, number>}
@@ -28,7 +36,7 @@ export const QUESTIONS = {
     instructions:
       'Is `title` and `text` a news article, analysis, or opinion piece about current events or public affairs?',
     criteria: {
-      true: 'A news story, report, analysis, or op-ed',
+      true: 'A news story, report, analysis, or op-ed, including the transcript of a broadcast or video report',
       false:
         'Not an article: a homepage, product page, search results, social feed, docs, or other non-news content'
     }

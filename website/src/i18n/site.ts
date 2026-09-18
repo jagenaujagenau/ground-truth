@@ -21,6 +21,7 @@ export type SiteCopy = {
   simToggleAria: string
   simNothingTitle: string
   simOpenOriginal: string
+  simTranscript: string
   idleTitle: string
   idleBody: string
   featuresTitle: string
@@ -44,6 +45,7 @@ export type SiteCopy = {
   errUnreachable: string
   errNotPage: string
   errThin: string
+  errCaptions: string
   errRate: string
   errDaily: string
   errService: string
@@ -69,13 +71,14 @@ const en: SiteCopy = {
   simBlankBody:
     'The page opens here and Ground Truth reads it in the panel, exactly as it would in your own browser.',
   simCaption:
-    'Real articles, actually read: paste any link, or take whatever an outlet is leading with. The demo fetches the page, pulls out its text and sends it to TypeSafe, which answers the same five questions the extension asks. Nothing about you is stored, and the number of reads is capped so it stays up.',
+    'Real articles, actually read: paste any link, or take whatever an outlet is leading with. The demo fetches the page, pulls out its text and sends it to TypeSafe, which answers the same five questions the extension asks. Nothing about you is stored, and the number of reads is capped so it stays up. A YouTube link works too: it reads the transcript.',
   simUrlLabel: 'Link to an article',
   simNewTab: 'New tab',
   simPanelAria: 'Ground Truth side panel',
   simToggleAria: 'Toggle the Ground Truth panel',
   simNothingTitle: 'Nothing to show',
   simOpenOriginal: 'Open the original ↗',
+  simTranscript: 'Transcript',
   idleTitle: 'Nothing to read yet',
   idleBody: 'Paste a link to a news story in the address bar above and Ground Truth reads it.',
   featuresTitle: 'The part you’d otherwise have to do yourself',
@@ -105,6 +108,7 @@ const en: SiteCopy = {
   errUnreachable: 'That site couldn’t be reached.',
   errNotPage: 'That address isn’t a web page.',
   errThin: 'There isn’t enough article text on that page to read.',
+  errCaptions: 'That video has no captions, so there’s nothing to read.',
   errRate: 'That’s a lot of articles in a row. Give it a few minutes and try again.',
   errDaily: 'The demo has hit its reading limit for today. It resets tomorrow.',
   errService: 'The reading itself failed. It’s usually temporary.',
@@ -130,13 +134,14 @@ const es: SiteCopy = {
   simBlankBody:
     'La página se abre acá y Ground Truth la lee en el panel, igual que lo haría en tu navegador.',
   simCaption:
-    'Notas reales, leídas de verdad: pegá cualquier link o agarrá lo que un medio tiene hoy en tapa. Se baja la página, se saca el texto y TypeSafe lo lee con las mismas cinco preguntas que usa la extensión. No se guarda nada tuyo y la cantidad de lecturas está limitada para que la demo siga en pie.',
+    'Notas reales, leídas de verdad: pegá cualquier link o agarrá lo que un medio tiene hoy en tapa. Se baja la página, se saca el texto y TypeSafe lo lee con las mismas cinco preguntas que usa la extensión. No se guarda nada tuyo y la cantidad de lecturas está limitada para que la demo siga en pie. Un link de YouTube también sirve: lee la transcripción.',
   simUrlLabel: 'Link a una nota',
   simNewTab: 'Nueva pestaña',
   simPanelAria: 'Panel lateral de Ground Truth',
   simToggleAria: 'Mostrar u ocultar el panel de Ground Truth',
   simNothingTitle: 'Nada para mostrar',
   simOpenOriginal: 'Abrir el original ↗',
+  simTranscript: 'Transcripción',
   idleTitle: 'Todavía no leíste ninguna nota',
   idleBody: 'Pegá el link de una noticia en la barra de arriba y Ground Truth la lee.',
   featuresTitle: 'El trabajo que, si no, te toca a vos',
@@ -167,6 +172,7 @@ const es: SiteCopy = {
   errUnreachable: 'No pudimos entrar a ese sitio.',
   errNotPage: 'Esa dirección no es una página web.',
   errThin: 'Esa página no tiene suficiente texto para leer.',
+  errCaptions: 'Ese video no tiene subtítulos, así que no hay nada para leer.',
   errRate: 'Son muchas notas seguidas. Esperá unos minutos y probá de nuevo.',
   errDaily: 'La demo llegó al límite de lecturas de hoy. Mañana se renueva.',
   errService: 'Falló la lectura. Casi siempre es pasajero.',
@@ -192,13 +198,14 @@ const de: SiteCopy = {
   simBlankBody:
     'Die Seite erscheint hier, Ground Truth liest sie im Panel — genau wie in deinem eigenen Browser.',
   simCaption:
-    'Echte Artikel, wirklich gelesen: füge einen Link ein oder nimm den Aufmacher eines Mediums. Die Seite wird geholt, der Text herausgelöst und von TypeSafe gelesen — dieselben fünf Fragen wie in der Erweiterung. Über dich wird nichts gespeichert, und die Zahl der Lesungen ist begrenzt, damit die Demo online bleibt.',
+    'Echte Artikel, wirklich gelesen: füge einen Link ein oder nimm den Aufmacher eines Mediums. Die Seite wird geholt, der Text herausgelöst und von TypeSafe gelesen — dieselben fünf Fragen wie in der Erweiterung. Über dich wird nichts gespeichert, und die Zahl der Lesungen ist begrenzt, damit die Demo online bleibt. Ein YouTube-Link geht auch: dann liest sie die Untertitel.',
   simUrlLabel: 'Link zu einem Artikel',
   simNewTab: 'Neuer Tab',
   simPanelAria: 'Ground-Truth-Seitenpanel',
   simToggleAria: 'Ground-Truth-Panel ein- oder ausblenden',
   simNothingTitle: 'Nichts anzuzeigen',
   simOpenOriginal: 'Original öffnen ↗',
+  simTranscript: 'Transkript',
   idleTitle: 'Noch nichts gelesen',
   idleBody: 'Füge oben einen Artikel-Link ein, dann liest Ground Truth ihn.',
   featuresTitle: 'Die Arbeit, die du dir sonst selbst machst',
@@ -229,6 +236,7 @@ const de: SiteCopy = {
   errUnreachable: 'Die Seite war nicht erreichbar.',
   errNotPage: 'Hinter der Adresse steckt keine Webseite.',
   errThin: 'Auf der Seite steht zu wenig Text zum Lesen.',
+  errCaptions: 'Das Video hat keine Untertitel, also gibt es nichts zu lesen.',
   errRate: 'Das waren viele Artikel am Stück. Ein paar Minuten warten, dann geht es weiter.',
   errDaily: 'Die Demo hat ihr Tagespensum erreicht. Morgen wieder.',
   errService: 'Das Lesen hat nicht geklappt. Das legt sich meist von selbst.',
@@ -254,13 +262,14 @@ const fr: SiteCopy = {
   simBlankBody:
     'La page s’affiche ici et Ground Truth la lit dans le panneau, comme dans votre propre navigateur.',
   simCaption:
-    'De vrais articles, vraiment lus : collez un lien, ou prenez la une d’un média. La page est récupérée, son texte extrait, puis lu par TypeSafe — les cinq mêmes questions que dans l’extension. Rien n’est conservé sur vous, et le nombre de lectures est plafonné pour que la démo tienne le coup.',
+    'De vrais articles, vraiment lus : collez un lien, ou prenez la une d’un média. La page est récupérée, son texte extrait, puis lu par TypeSafe — les cinq mêmes questions que dans l’extension. Rien n’est conservé sur vous, et le nombre de lectures est plafonné pour que la démo tienne le coup. Un lien YouTube marche aussi : elle en lit la transcription.',
   simUrlLabel: 'Lien vers un article',
   simNewTab: 'Nouvel onglet',
   simPanelAria: 'Panneau latéral Ground Truth',
   simToggleAria: 'Afficher ou masquer le panneau Ground Truth',
   simNothingTitle: 'Rien à afficher',
   simOpenOriginal: 'Ouvrir l’original ↗',
+  simTranscript: 'Transcription',
   idleTitle: 'Rien de lu pour l’instant',
   idleBody: 'Collez le lien d’un article dans la barre ci-dessus, Ground Truth s’en charge.',
   featuresTitle: 'Le travail que vous feriez à sa place',
@@ -292,6 +301,7 @@ const fr: SiteCopy = {
   errUnreachable: 'Impossible de joindre ce site.',
   errNotPage: 'Cette adresse ne mène pas à une page web.',
   errThin: 'Il y a trop peu de texte sur cette page pour la lire.',
+  errCaptions: 'Cette vidéo n’a pas de sous-titres, il n’y a donc rien à lire.',
   errRate: 'Beaucoup d’articles d’affilée. Revenez dans quelques minutes.',
   errDaily: 'La démo a atteint son quota du jour. Elle repart demain.',
   errService: 'La lecture a échoué. Cela se règle en général tout seul.',
@@ -317,13 +327,14 @@ const it: SiteCopy = {
   simBlankBody:
     'La pagina compare qui e Ground Truth la legge nel pannello, come farebbe nel tuo browser.',
   simCaption:
-    'Articoli veri, letti davvero: incolla un link oppure prendi l’apertura di una testata. La pagina viene scaricata, il testo estratto e letto da TypeSafe con le stesse cinque domande dell’estensione. Di te non resta niente e il numero di letture è limitato, così la demo regge.',
+    'Articoli veri, letti davvero: incolla un link oppure prendi l’apertura di una testata. La pagina viene scaricata, il testo estratto e letto da TypeSafe con le stesse cinque domande dell’estensione. Di te non resta niente e il numero di letture è limitato, così la demo regge. Funziona anche un link di YouTube: ne legge i sottotitoli.',
   simUrlLabel: 'Link a un articolo',
   simNewTab: 'Nuova scheda',
   simPanelAria: 'Pannello laterale di Ground Truth',
   simToggleAria: 'Mostra o nascondi il pannello di Ground Truth',
   simNothingTitle: 'Niente da mostrare',
   simOpenOriginal: 'Apri l’originale ↗',
+  simTranscript: 'Trascrizione',
   idleTitle: 'Ancora niente di letto',
   idleBody: 'Incolla il link di un articolo nella barra qui sopra e Ground Truth lo legge.',
   featuresTitle: 'Il lavoro che altrimenti tocca a te',
@@ -354,6 +365,7 @@ const it: SiteCopy = {
   errUnreachable: 'Non siamo riusciti a raggiungere il sito.',
   errNotPage: 'Quell’indirizzo non porta a una pagina web.',
   errThin: 'In quella pagina c’è troppo poco testo da leggere.',
+  errCaptions: 'Quel video non ha sottotitoli, quindi non c’è niente da leggere.',
   errRate: 'Sono tanti articoli di fila. Riprova tra qualche minuto.',
   errDaily: 'La demo ha esaurito le letture di oggi. Domani riparte.',
   errService: 'La lettura non è riuscita. Di solito passa da sola.',
@@ -379,13 +391,14 @@ const pt: SiteCopy = {
   simBlankBody:
     'A página aparece aqui e o Ground Truth lê-a no painel, tal como faria no teu navegador.',
   simCaption:
-    'Artigos reais, lidos a sério: cola um link ou usa a manchete de um meio. A página é descarregada, o texto extraído e lido pelo TypeSafe com as mesmas cinco perguntas da extensão. De ti não fica nada, e o número de leituras é limitado para a demo aguentar.',
+    'Artigos reais, lidos a sério: cola um link ou usa a manchete de um meio. A página é descarregada, o texto extraído e lido pelo TypeSafe com as mesmas cinco perguntas da extensão. De ti não fica nada, e o número de leituras é limitado para a demo aguentar. Um link do YouTube também serve: lê a transcrição.',
   simUrlLabel: 'Link para um artigo',
   simNewTab: 'Novo separador',
   simPanelAria: 'Painel lateral do Ground Truth',
   simToggleAria: 'Mostrar ou esconder o painel do Ground Truth',
   simNothingTitle: 'Nada para mostrar',
   simOpenOriginal: 'Abrir o original ↗',
+  simTranscript: 'Transcrição',
   idleTitle: 'Ainda não há nada lido',
   idleBody: 'Cola o link de um artigo na barra acima e o Ground Truth lê-o.',
   featuresTitle: 'O trabalho que de outra forma é teu',
@@ -415,6 +428,7 @@ const pt: SiteCopy = {
   errUnreachable: 'Não foi possível chegar a esse site.',
   errNotPage: 'Esse endereço não dá para uma página web.',
   errThin: 'Essa página tem pouco texto para ler.',
+  errCaptions: 'Esse vídeo não tem legendas, por isso não há nada para ler.',
   errRate: 'São muitos artigos seguidos. Tenta daqui a uns minutos.',
   errDaily: 'A demo esgotou as leituras de hoje. Amanhã recomeça.',
   errService: 'A leitura falhou. Costuma resolver-se sozinha.',

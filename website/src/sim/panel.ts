@@ -3,7 +3,7 @@
 import {leanShares, leanSide, topLevel, type Probs} from './typesafe'
 import type {T} from '../i18n'
 
-export type Article = {url: string; source: string; title: string; text?: string; favicon?: string}
+export type Article = {url: string; source: string; title: string; text?: string; favicon?: string; image?: string}
 export type Analysis = {
   isNews: number
   lean: {probabilities: Probs}

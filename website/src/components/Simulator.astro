@@ -20,12 +20,14 @@ const strings = {
   idleBody: copy.idleBody,
   nothingTitle: copy.simNothingTitle,
   openOriginal: copy.simOpenOriginal,
+  transcript: copy.simTranscript,
   newTab: copy.simNewTab,
   errAddress: copy.errAddress,
   errBlocked: copy.errBlocked,
   errUnreachable: copy.errUnreachable,
   errNotPage: copy.errNotPage,
   errThin: copy.errThin,
+  errCaptions: copy.errCaptions,
   errRate: copy.errRate,
   errDaily: copy.errDaily,
   errService: copy.errService,
@@ -119,6 +121,7 @@ const strings = {
     unreachable: 'errUnreachable',
     notpage: 'errNotPage',
     thin: 'errThin',
+    captions: 'errCaptions',
     rate: 'errRate',
     daily: 'errDaily',
     service: 'errService'
@@ -202,7 +205,8 @@ const strings = {
   function showDocument(article: Article) {
     const url = new URL(article.url)
     const inner = el('div')
-    inner.append(el('p', 'sim-kicker', article.source))
+    // A video says so: the words below are its captions, not prose someone wrote.
+    inner.append(el('p', 'sim-kicker', article.image ? `${article.source} · ${t('transcript')}` : article.source))
     inner.append(el('h1', '', article.title))
     const link = document.createElement('a')
     link.className = 'sim-origin'
@@ -211,6 +215,16 @@ const strings = {
     link.rel = 'noopener noreferrer'
     link.textContent = t('openOriginal')
     inner.append(link)
+    if (article.image) {
+      const still = document.createElement('img')
+      still.className = 'sim-still'
+      still.src = article.image
+      still.alt = ''
+      still.loading = 'lazy'
+      still.referrerPolicy = 'no-referrer'
+      still.addEventListener('error', () => still.remove())
+      inner.append(still)
+    }
     const prose = el('div', 'sim-prose')
     for (const p of (article.text ?? '').split('\n\n')) prose.append(el('p', '', p))
     inner.append(prose)
@@ -275,7 +289,7 @@ const strings = {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: {'content-type': 'application/json'},
-        body: JSON.stringify({url: url.href, force})
+        body: JSON.stringify({url: url.href, force, lang: document.documentElement.lang})
       })
       const data = (await res.json()) as {
         status: PanelState['status']
@@ -646,6 +660,16 @@ const strings = {
   }
   .sim-page :global(.sim-origin):hover {
     color: var(--ink);
+  }
+  .sim-page :global(.sim-still) {
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    margin-top: 20px;
+    border-radius: 12px;
+    background: var(--sunk);
   }
   .sim-page :global(.sim-prose p) {
     margin: 18px 0 0;

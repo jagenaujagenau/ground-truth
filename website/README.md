@@ -35,6 +35,11 @@ extension's **real side panel** inside it. Paste a link (or take an outlet's cur
 TypeSafe. Because one key pays for everyone, the route caches each URL for six hours, allows twelve
 reads per visitor per five minutes, and stops at `DAILY_READ_LIMIT` reads a day.
 
+A YouTube link is read too: `src/lib/youtube.ts` takes an InnerTube key off the watch page, asks the
+player endpoint for the video as the Android client, and reads the caption track it names. That
+sequence is ported from [youtube-transcript-plus](https://github.com/ericmmartin/youtube-transcript-plus)
+(MIT) rather than depended on. Videos without captions, and live ones, say so.
+
 Some outlets refuse automated readers (AP and Politico return 403, for instance) and some pages
 carry too little prose to judge — both land in the panel's own error and empty states, which is what
 the extension does too.
@@ -50,6 +55,7 @@ host permission; posted text is cached against a fingerprint of the text rather 
 |------|------------|
 | `src/pages/api/analyze.ts` | The read: URL guard, rate limit, cache, TypeSafe call. |
 | `src/pages/api/pick.ts` | Resolves an outlet's newest *readable* story from its RSS feed. |
+| `src/lib/youtube.ts` | Turns a YouTube link into an article: its caption track as the text, the video's own title and channel. |
 | `src/lib/fetch-article.ts` | Fetches a page and extracts it, mirroring the extension's content script; blocks private addresses. |
 | `src/lib/typesafe.ts` | The five questions, copied from `../src/typesafe.ts`. |
 | `src/sim/panel.ts` | A port of `../src/sidebar/scripts.ts`: same markup, same copy, same states. |
