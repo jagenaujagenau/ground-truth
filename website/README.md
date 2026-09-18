@@ -7,13 +7,18 @@ the reading, so the demo works on whatever article a visitor hands it.
 npm install
 cp .env.example .env    # set TYPESAFE_API_KEY
 npm run dev             # http://localhost:4321
-npm run build && npm start
+npm run build           # .vercel/output
 ```
 
-The build needs a Node host (`@astrojs/node`, standalone) — the page is prerendered, but
-`/api/analyze` and `/api/pick` run on demand. The key is declared as an `astro:env` secret, so it is
-read from the environment at request time and never written into the build; `npm start` picks up a
-local `.env`, and a host that injects real environment variables needs no file at all.
+It deploys to Vercel (`@astrojs/vercel`): the page is prerendered, `/api/analyze` and `/api/pick`
+run as functions. `vercel deploy` from this directory, with `TYPESAFE_API_KEY` set on the project —
+the key is an `astro:env` secret, read from the environment at request time and never written into
+the build. `site` comes from `SITE_URL`, falling back to Vercel's own production URL, so the
+`hreflang` links are absolute without configuring anything.
+
+One thing to know about running on functions: the URL cache, the per-visitor rate limit and the
+daily cap all live in memory, so each function instance keeps its own. They hold within an instance
+and drift apart across them. A shared store would fix that if the demo ever needs a real ceiling.
 
 ## The demo reads real articles
 
