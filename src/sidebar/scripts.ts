@@ -1,6 +1,6 @@
 import './styles.css'
 import {leanShares, leanSide, topLevel, type Analysis, type Article} from '../typesafe'
-import {envKey, tabKey, type TabState} from '../shared'
+import {envApiUrl, tabKey, type TabState} from '../shared'
 import {isAllowed, parseDomains} from '../domains'
 
 // ---- Tiny escaped templating: every interpolation is escaped unless it is already Html ----
@@ -43,19 +43,35 @@ const mark = (cls = 'mark') => html`<svg class="${cls}" viewBox="0 0 32 32" aria
 const favicon = (domain: string, src?: string) => html`<span class="favicon" data-letter="${domain[0]}" aria-hidden="true">
   <img src="${src || favicons[domain] || `https://${domain}/favicon.ico`}" alt="" referrerpolicy="no-referrer" /></span>`
 
-// ---- Copy ----
+// ---- Copy: every string comes from _locales/<lang>/messages.json ----
+const t = (key: string, ...subs: (string | number)[]) =>
+  chrome.i18n.getMessage(key, subs.map(String))
+
 const LEVELS = [
-  {short: 'Far L', label: 'Far Left', side: 'left', blurb: 'Consistently framed from a progressive viewpoint.'},
-  {short: 'Left', label: 'Lean Left', side: 'left', blurb: 'Word choice and sourcing tilt toward progressive views.'},
-  {short: 'Center', label: 'Center', side: 'center', blurb: 'Balanced framing with neutral word choice.'},
-  {short: 'Right', label: 'Lean Right', side: 'right', blurb: 'Word choice and sourcing tilt toward conservative views.'},
-  {short: 'Far R', label: 'Far Right', side: 'right', blurb: 'Consistently framed from a conservative viewpoint.'}
+  {key: 'FarLeft', side: 'left'},
+  {key: 'Left', side: 'left'},
+  {key: 'Center', side: 'center'},
+  {key: 'Right', side: 'right'},
+  {key: 'FarRight', side: 'right'}
+].map(({key, side}) => ({
+  short: t(`level${key}Short`),
+  label: t(`level${key}`),
+  blurb: t(`level${key}Blurb`),
+  side
+}))
+const LANGUAGE = ['Neutral', 'Somewhat', 'Highly'].map((key) => ({
+  label: t(`lang${key}`),
+  blurb: t(`lang${key}Blurb`)
+}))
+// The model answers in English; the chips show it in the reader's language.
+const chip = (kind: 'kind' | 'topic', choice: string) =>
+  t(`${kind}${choice.charAt(0).toUpperCase()}${choice.slice(1)}`) || choice
+
+const SIDES = [
+  ['left', t('sideLeft')],
+  ['center', t('sideCenter')],
+  ['right', t('sideRight')]
 ] as const
-const LANGUAGE = [
-  {label: 'Neutral', blurb: 'Plain, descriptive wording with attributed claims.'},
-  {label: 'Somewhat loaded', blurb: 'Some charged adjectives or dramatic framing.'},
-  {label: 'Highly loaded', blurb: 'Sensational, emotionally charged wording throughout.'}
-]
 const pct = (n: number) => `${Math.round(n * 100)}%`
 
 // ---- State ----
@@ -64,7 +80,7 @@ let view: 'page' | 'settings' = 'page'
 let tabId: number | undefined
 let tab: TabState | undefined
 let domains: string[] = []
-let hasSavedKey = false
+let hasSavedUrl = false
 let favicons: Record<string, string> = {}
 let lastHtml = ''
 
@@ -72,16 +88,16 @@ let lastHtml = ''
 function header() {
   if (view === 'settings') {
     return html`<header class="appbar">
-      <button class="icon-btn" data-action="back" aria-label="Back to article">${I.back}</button>
-      <h1 class="appbar-title">Settings</h1>
+      <button class="icon-btn" data-action="back" aria-label="${t('backAria')}">${I.back}</button>
+      <h1 class="appbar-title">${t('settingsTitle')}</h1>
     </header>`
   }
   const busy = tab?.status === 'analyzing'
   return html`<header class="appbar">
-    <div class="brand">${mark()}<span class="wordmark">Ground Truth</span></div>
+    <div class="brand">${mark()}<span class="wordmark">${t('extName')}</span></div>
     <div class="appbar-actions">
-      <button class="icon-btn ${busy ? 'is-spinning' : ''}" data-action="refresh" aria-label="Analyze again" ${raw(tabId === undefined || busy ? 'disabled' : '')}>${I.refresh}</button>
-      <button class="icon-btn" data-action="settings" aria-label="Settings">${I.sliders}</button>
+      <button class="icon-btn ${busy ? 'is-spinning' : ''}" data-action="refresh" aria-label="${t('refreshAria')}" ${raw(tabId === undefined || busy ? 'disabled' : '')}>${I.refresh}</button>
+      <button class="icon-btn" data-action="settings" aria-label="${t('settingsTitle')}">${I.sliders}</button>
     </div>
   </header>`
 }
@@ -98,20 +114,16 @@ function result(a: Article, r: Analysis) {
   const shares = leanShares(p)
   const lang = topLevel(r.loaded.probabilities, 3)
   const max = Math.max(...LEVELS.map((_, i) => p[i] ?? 0)) || 1
-  const sides = [
-    ['left', 'Left'],
-    ['center', 'Center'],
-    ['right', 'Right']
-  ] as const
+  const sides = SIDES
 
   return html`<article class="result">
-    ${story(a, [r.kind.choice, r.topic.choice])}
+    ${story(a, [chip('kind', r.kind.choice), chip('topic', r.topic.choice)])}
 
     <section class="card verdict" aria-labelledby="verdict">
-      <p class="eyebrow">Framing</p>
+      <p class="eyebrow">${t('cardFraming')}</p>
       <p class="verdict-label" id="verdict" data-side="${top.side}">${top.label}</p>
-      ${mixed && html`<p class="flag"><span class="flag-dot"></span>Mixed signals</p>`}
-      <p class="verdict-blurb">${mixed ? 'Parts of the framing tilt each way. Worth reading with both lenses.' : top.blurb}</p>
+      ${mixed && html`<p class="flag"><span class="flag-dot"></span>${t('mixedFlag')}</p>`}
+      <p class="verdict-blurb">${mixed ? t('mixedBlurb') : top.blurb}</p>
       <div class="split" role="img" aria-label="${sides.map(([k, n]) => `${n} ${pct(shares[k])}`).join(', ')}">
         ${sides.filter(([k]) => shares[k] >= 0.005).map(([k], i) => html`<span class="split-seg" data-side="${k}" style="flex-grow:${shares[k].toFixed(3)};--i:${i}"></span>`)}
       </div>
@@ -121,7 +133,7 @@ function result(a: Article, r: Analysis) {
     </section>
 
     <section class="card">
-      <div class="card-head"><p class="eyebrow">Spectrum</p><p class="hint">How likely each reading is</p></div>
+      <div class="card-head"><p class="eyebrow">${t('cardSpectrum')}</p><p class="hint">${t('spectrumHint')}</p></div>
       <div class="histo" role="img" aria-label="${LEVELS.map((l, i) => `${l.label} ${pct(p[i] ?? 0)}`).join(', ')}">
         ${LEVELS.map(
           (l, i) => html`<div class="col ${l === top ? 'is-top' : ''}" data-side="${l.side}" style="--h:${((p[i] ?? 0) / max).toFixed(3)};--i:${i}">
@@ -134,23 +146,23 @@ function result(a: Article, r: Analysis) {
     </section>
 
     <section class="card">
-      <div class="card-head"><p class="eyebrow">Language</p><p class="hint strong">${LANGUAGE[lang].label}</p></div>
+      <div class="card-head"><p class="eyebrow">${t('cardLanguage')}</p><p class="hint strong">${LANGUAGE[lang].label}</p></div>
       <div class="meter" data-level="${lang}" aria-hidden="true"><span></span><span></span><span></span></div>
       <p class="card-body">${LANGUAGE[lang].blurb}</p>
     </section>
 
     <a class="cta" href="https://news.google.com/search?q=${encodeURIComponent(a.title)}" target="_blank" rel="noopener noreferrer">
-      <span class="cta-text"><b>Compare coverage</b><small>See how other outlets report this story</small></span>
+      <span class="cta-text"><b>${t('ctaTitle')}</b><small>${t('ctaBody')}</small></span>
       <span class="cta-icon">${I.arrow}</span>
     </a>
-    <p class="fineprint">An AI read of this article’s framing, not a rating of ${a.source}. Powered by TypeSafe.</p>
+    <p class="fineprint">${t('fineprint', a.source)}</p>
   </article>`
 }
 
 const loading = (a?: Article) => html`<div class="result is-loading" aria-busy="true">
   ${a ? story(a) : html`<div class="story"><span class="skel skel-meta"></span><span class="skel skel-title"></span><span class="skel skel-title short"></span></div>`}
   <section class="card verdict">
-    <p class="eyebrow">Reading the framing<span class="ellipsis"></span></p>
+    <p class="eyebrow">${t('loadingTitle')}<span class="ellipsis"></span></p>
     <span class="skel skel-verdict"></span>
     <span class="skel skel-line"></span>
     <span class="skel skel-bar"></span>
@@ -176,43 +188,43 @@ function page() {
       if (s.analysis.isNews >= 0.5) return result(s.article, s.analysis)
       return empty({
         art: I.page,
-        title: 'Not a news story',
-        body: html`This page on <b>${s.article.source}</b> doesn’t read like news or opinion, so there’s no framing to rate.`,
-        actions: html`<button class="btn btn-ghost" data-action="refresh">${I.refresh}Check again</button>`
+        title: t('notNewsTitle'),
+        body: t('notNewsBody', s.article.source),
+        actions: html`<button class="btn btn-ghost" data-action="refresh">${I.refresh}${t('checkAgain')}</button>`
       })
     case 'off':
       return empty({
         art: I.pause,
         tone: 'paused',
-        title: `Paused on ${s.article.source}`,
-        body: 'Ground Truth only reads sites on your list. Add this one to see how its stories are framed.',
-        actions: html`<button class="btn btn-primary" data-action="add-site" data-domain="${s.article.source}">${I.plus}Add ${s.article.source}</button>
-          <button class="btn btn-ghost" data-action="settings">Manage sites</button>`,
+        title: t('pausedTitle', s.article.source),
+        body: t('pausedBody'),
+        actions: html`<button class="btn btn-primary" data-action="add-site" data-domain="${s.article.source}">${I.plus}${t('addSite', s.article.source)}</button>
+          <button class="btn btn-ghost" data-action="settings">${t('manageSites')}</button>`,
         extra: html`<figure class="empty-quote"><figcaption class="source">${favicon(s.article.source, s.article.favicon)}${s.article.source}</figcaption><blockquote>“${s.article.title}”</blockquote></figure>`
       })
     case 'empty':
       return empty({
         art: I.page,
-        title: 'Nothing to read here',
-        body: 'Open a news story and Ground Truth reads its framing automatically.',
-        actions: html`<button class="btn btn-ghost" data-action="refresh">${I.refresh}Check again</button>`,
-        extra: html`<p class="empty-note">Tab open since before installing? Reload the page.</p>`
+        title: t('emptyTitle'),
+        body: t('emptyBody'),
+        actions: html`<button class="btn btn-ghost" data-action="refresh">${I.refresh}${t('checkAgain')}</button>`,
+        extra: html`<p class="empty-note">${t('emptyNote')}</p>`
       })
-    case 'nokey':
+    case 'nourl':
       return empty({
         art: I.key,
-        title: 'Connect TypeSafe',
-        body: 'Add your TypeSafe API key and Ground Truth will start reading articles.',
-        actions: html`<button class="btn btn-primary" data-action="settings">Add API key</button>`
+        title: t('notConnectedTitle'),
+        body: t('notConnectedBody'),
+        actions: html`<button class="btn btn-primary" data-action="settings">${t('notConnectedAction')}</button>`
       })
     case 'error':
       return empty({
         art: I.alert,
         tone: 'error',
-        title: 'Couldn’t read this story',
-        body: html`Something went wrong analyzing <b>${s.article.source}</b>. It’s usually temporary.`,
-        actions: html`<button class="btn btn-primary" data-action="refresh">${I.refresh}Try again</button>`,
-        extra: html`<details class="empty-details"><summary>Details</summary><code>${s.message}</code></details>`
+        title: t('errorTitle'),
+        body: t('errorBody', s.article.source),
+        actions: html`<button class="btn btn-primary" data-action="refresh">${I.refresh}${t('tryAgain')}</button>`,
+        extra: html`<details class="empty-details"><summary>${t('details')}</summary><code>${s.message}</code></details>`
       })
   }
 }
@@ -223,44 +235,44 @@ function settings() {
   return html`<main class="settings">
     <section class="group">
       <div class="group-head">
-        <h2 class="group-title">Sites</h2>
-        <span class="pill ${n ? '' : 'pill-accent'}">${n ? `${n} site${n > 1 ? 's' : ''}` : 'Every site'}</span>
+        <h2 class="group-title">${t('sitesTitle')}</h2>
+        <span class="pill ${n ? '' : 'pill-accent'}">${n ? (n === 1 ? t('sitesOne') : t('sitesMany', n)) : t('sitesEvery')}</span>
       </div>
-      <p class="group-body">${n
-        ? 'Ground Truth reads articles only on these sites and their subdomains.'
-        : 'Ground Truth reads every news story you open. Add sites to limit it to just those.'}</p>
+      <p class="group-body">${n ? t('sitesBodySome') : t('sitesBodyAll')}</p>
       <form class="field-row" data-form="domain" novalidate>
-        <label class="sr-only" for="domain">Add a site</label>
+        <label class="sr-only" for="domain">${t('addSiteLabel')}</label>
         <input id="domain" name="domain" placeholder="nytimes.com" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="domain-error" />
-        <button class="btn btn-primary" type="submit">Add</button>
+        <button class="btn btn-primary" type="submit">${t('add')}</button>
       </form>
       <p class="field-error" id="domain-error" role="alert"></p>
       ${current && !domains.includes(current) && html`<button class="suggest" data-action="add-site" data-domain="${current}">
-        <span class="suggest-plus">${I.plus}</span><span>Add current site <b>${current}</b></span></button>`}
+        <span class="suggest-plus">${I.plus}</span><span>${t('addCurrentSite', current)}</span></button>`}
       ${n > 0 && html`<ul class="sites">${domains.map(
         (d) => html`<li class="site">
           ${favicon(d)}
           <span class="site-name">${d}</span>
-          <button class="icon-btn icon-btn-sm" data-action="remove-site" data-domain="${d}" aria-label="Remove ${d}">${I.x}</button>
+          <button class="icon-btn icon-btn-sm" data-action="remove-site" data-domain="${d}" aria-label="${t('removeSiteAria', d)}">${I.x}</button>
         </li>`
       )}</ul>`}
     </section>
 
-    ${!envKey && html`<section class="group">
+    ${!envApiUrl && html`<section class="group">
       <div class="group-head">
-        <h2 class="group-title">TypeSafe API key</h2>
-        <span class="pill ${hasSavedKey ? 'pill-ok' : ''}">${hasSavedKey ? 'Connected' : 'Not set'}</span>
+        <h2 class="group-title">${t('serviceTitle')}</h2>
+        <span class="pill ${hasSavedUrl ? 'pill-ok' : ''}">${hasSavedUrl ? t('serviceConnected') : t('serviceNotSet')}</span>
       </div>
-      <form class="field-row" data-form="key">
-        <label class="sr-only" for="key">API key</label>
-        <input id="key" name="key" type="password" autocomplete="off" placeholder="${hasSavedKey ? 'Paste a new key to replace' : 'Paste your key'}" />
-        <button class="btn btn-primary" type="submit">Save</button>
+      <p class="group-body">${t('serviceBody')}</p>
+      <form class="field-row" data-form="url" novalidate>
+        <label class="sr-only" for="service">${t('serviceLabel')}</label>
+        <input id="service" name="service" type="url" autocomplete="off" spellcheck="false" placeholder="https://example.com/api/analyze" aria-describedby="service-error" />
+        <button class="btn btn-primary" type="submit">${t('save')}</button>
       </form>
+      <p class="field-error" id="service-error" role="alert"></p>
     </section>`}
 
     <section class="group">
-      <h2 class="group-title">Privacy</h2>
-      <p class="group-body">Article text is sent to TypeSafe to be analyzed. Results are kept only for this browser session.</p>
+      <h2 class="group-title">${t('privacyTitle')}</h2>
+      <p class="group-body">${t('privacyBody')}</p>
     </section>
   </main>`
 }
@@ -296,11 +308,11 @@ async function load() {
   const key = tabId === undefined ? '' : tabKey(tabId)
   const [session, local] = await Promise.all([
     key ? chrome.storage.session.get(key) : Promise.resolve({} as Record<string, unknown>),
-    chrome.storage.local.get(['domains', 'apiKey', 'favicons'])
+    chrome.storage.local.get(['domains', 'apiUrl', 'favicons'])
   ])
   tab = session[key] as TabState | undefined
   domains = (local.domains as string[] | undefined) ?? []
-  hasSavedKey = Boolean(local.apiKey)
+  hasSavedUrl = Boolean(local.apiUrl)
   favicons = (local.favicons as Record<string, string> | undefined) ?? {}
   // Not checked yet (tab predates the extension), or its site was added in another tab since.
   if (!tab || (tab.status === 'off' && isAllowed(tab.article.source, domains))) requestCheck()
@@ -337,15 +349,20 @@ app.addEventListener('submit', async (e) => {
   if (form.dataset.form === 'domain') {
     const added = parseDomains(input.value)
     if (!added.length) {
-      app.querySelector('#domain-error')!.textContent = 'Enter a domain like nytimes.com'
+      app.querySelector('#domain-error')!.textContent = t('domainError')
       return input.focus()
     }
     input.value = ''
     await saveDomains([...domains, ...added])
-  } else if (form.dataset.form === 'key' && input.value.trim()) {
-    await chrome.storage.local.set({apiKey: input.value.trim()})
+  } else if (form.dataset.form === 'url') {
+    const address = input.value.trim()
+    if (!/^https?:\/\/\S+$/.test(address)) {
+      app.querySelector('#service-error')!.textContent = t('serviceError')
+      return input.focus()
+    }
+    await chrome.storage.local.set({apiUrl: address})
     input.value = ''
-    hasSavedKey = true
+    hasSavedUrl = true
     requestCheck(true)
     render()
   }
@@ -361,7 +378,9 @@ app.addEventListener(
 )
 
 app.addEventListener('input', (e) => {
-  if ((e.target as HTMLElement).id === 'domain') app.querySelector('#domain-error')!.textContent = ''
+  const id = (e.target as HTMLElement).id
+  if (id === 'domain') app.querySelector('#domain-error')!.textContent = ''
+  if (id === 'service') app.querySelector('#service-error')!.textContent = ''
 })
 
 document.addEventListener('keydown', (e) => {

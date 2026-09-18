@@ -6,21 +6,21 @@ export type TabState =
   | {status: 'done'; article: Article; analysis: Analysis}
   | {status: 'off'; article: Article} // site not in the Sites list
   | {status: 'empty'} // no readable article on the page
-  | {status: 'nokey'}
+  | {status: 'nourl'} // no reading service address configured
   | {status: 'error'; article: Article; message: string}
 
 export const tabKey = (tabId: number) => `tab:${tabId}`
 
-export const envKey = import.meta.env.EXTENSION_PUBLIC_TYPESAFE_API_KEY
+export const envApiUrl = import.meta.env.EXTENSION_PUBLIC_API_URL
 
 export async function getDomains() {
   const {domains} = await chrome.storage.local.get('domains')
   return (domains as string[] | undefined) ?? []
 }
 
-// A bundled .env key wins; the Settings key is only for builds without one.
-export async function apiKey() {
-  if (envKey) return envKey
-  const {apiKey} = await chrome.storage.local.get('apiKey')
-  return (apiKey as string) || ''
+// A bundled .env address wins; the Settings field is only for builds without one.
+export async function apiUrl() {
+  if (envApiUrl) return envApiUrl
+  const {apiUrl} = await chrome.storage.local.get('apiUrl')
+  return (apiUrl as string) || ''
 }

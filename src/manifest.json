@@ -13,8 +13,9 @@
       }
     }
   },
-  "name": "Ground Truth",
-  "description": "Ground News style bias check for any article, powered by TypeSafe.",
+  "default_locale": "en",
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -30,7 +31,7 @@
       "64": "images/icon-64.png",
       "128": "images/icon-128.png"
     },
-    "default_title": "Open Ground Truth"
+    "default_title": "__MSG_actionTitle__"
   },
   "firefox:browser_action": {
     "default_icon": {
@@ -40,15 +41,15 @@
       "64": "images/icon-64.png",
       "128": "images/icon-128.png"
     },
-    "default_title": "Open Ground Truth"
+    "default_title": "__MSG_actionTitle__"
   },
   "chromium:side_panel": {
     "default_path": "sidebar/index.html",
-    "default_title": "Ground Truth"
+    "default_title": "__MSG_extName__"
   },
   "firefox:sidebar_action": {
     "default_panel": "sidebar/index.html",
-    "default_title": "Ground Truth"
+    "default_title": "__MSG_extName__"
   },
   "chromium:permissions": [
     "sidePanel",
@@ -70,11 +71,7 @@
       ]
     }
   ],
-  "chromium:host_permissions": [
-    "https://api.typesafe.ai/*"
-  ],
   "firefox:permissions": [
-    "storage",
-    "https://api.typesafe.ai/*"
+    "storage"
   ]
 }

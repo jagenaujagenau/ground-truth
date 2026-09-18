@@ -1,5 +1,5 @@
 import {analyze, leanLabel, leanShares, leanSide, type Analysis, type Article} from './typesafe'
-import {apiKey, getDomains, tabKey, type TabState} from './shared'
+import {apiUrl, getDomains, tabKey, type TabState} from './shared'
 import {isAllowed} from './domains'
 import {drawMark} from './mark'
 
@@ -94,6 +94,8 @@ if (!isFirefoxLike && !isSafariLike) {
 // ponytail: cheap length pre-filter so most non-article pages never hit the API; is_news handles the rest
 const MIN_CHARS = 800
 const action = chrome.action ?? chrome.browserAction
+const t = (key: string, ...subs: string[]) => chrome.i18n.getMessage(key, subs)
+const LEVEL_KEYS = ['levelFarLeft', 'levelLeft', 'levelCenter', 'levelRight', 'levelFarRight']
 const DEFAULT_ICON = {16: 'images/icon-16.png', 32: 'images/icon-32.png'}
 const BADGE = {L: '#2f63e0', C: '#5b5e66', R: '#d8412f', MIX: '#7c4fd6'}
 const latestRun = new Map<number, number>()
@@ -119,7 +121,7 @@ function paint(tabId: number, a?: Analysis) {
   if (!a || a.isNews < 0.5) {
     action.setIcon({tabId, path: DEFAULT_ICON})
     action.setBadgeText({tabId, text: ''})
-    action.setTitle({tabId, title: 'Ground Truth'})
+    action.setTitle({tabId, title: t('extName')})
     return
   }
   const p = a.lean.probabilities
@@ -128,7 +130,9 @@ function paint(tabId: number, a?: Analysis) {
   action.setBadgeText({tabId, text: side})
   action.setBadgeBackgroundColor({tabId, color: BADGE[side]})
   action.setBadgeTextColor?.({tabId, color: '#ffffff'})
-  action.setTitle({tabId, title: `Ground Truth: ${leanLabel(p)}`})
+  const {level, mixed} = leanLabel(p)
+  const label = t(LEVEL_KEYS[level])
+  action.setTitle({tabId, title: t('tooltip', mixed ? t('mixedSuffix', label) : label)})
 }
 
 // Remember each site's real icon so Settings can show it for sites that aren't open.
@@ -148,15 +152,15 @@ async function check(tabId: number, force = false) {
   if (article?.favicon) rememberFavicon(article.source, article.favicon)
   if (article && !isAllowed(article.source, await getDomains())) return save({status: 'off', article})
   if (!article || article.text.length < MIN_CHARS) return save({status: 'empty'})
-  const key = await apiKey()
-  if (!key) return save({status: 'nokey'})
+  const endpoint = await apiUrl()
+  if (!endpoint) return save({status: 'nourl'})
 
   const cacheKey = `url:${article.url}`
   let analysis = force ? undefined : ((await chrome.storage.session.get(cacheKey))[cacheKey] as Analysis | undefined)
   if (!analysis) {
     await save({status: 'analyzing', article})
     try {
-      analysis = await analyze(article, key)
+      analysis = await analyze(article, endpoint)
     } catch (e) {
       return save({status: 'error', article, message: (e as Error).message})
     }
