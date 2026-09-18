@@ -59,7 +59,7 @@ const en: SiteCopy = {
   tagline: 'A bias check for whatever you’re reading',
   heroTitle: 'See how the story you’re reading is framed.',
   heroLede:
-    'Ground Truth sits beside the article and shows which way it leans, how heated the language is, and whether you’re reading reporting or someone’s argument. Hand the demo below a link and watch it work on a story you picked.',
+    'Ground Truth sits beside the article and shows which way it leans, how heated the language is, and whether you’re reading reporting or someone’s argument. Give the demo below a link and watch it read a story you picked.',
   heroAdd: 'Add to your browser',
   heroDemo: 'See it read a story',
   simPlaceholder: 'Paste a link to a news story',
@@ -69,7 +69,7 @@ const en: SiteCopy = {
   simBlankBody:
     'The page opens here and Ground Truth reads it in the panel, exactly as it would in your own browser.',
   simCaption:
-    'Real articles, read for real — paste any link, or take whatever an outlet is leading with. The page is fetched, its text pulled out and read by TypeSafe, the same five questions the extension asks. Nothing about you is stored, and the number of reads is capped so the demo stays up.',
+    'Real articles, actually read: paste any link, or take whatever an outlet is leading with. The demo fetches the page, pulls out its text and sends it to TypeSafe, which answers the same five questions the extension asks. Nothing about you is stored, and the number of reads is capped so it stays up.',
   simUrlLabel: 'Link to an article',
   simNewTab: 'New tab',
   simPanelAria: 'Ground Truth side panel',
@@ -92,7 +92,7 @@ const en: SiteCopy = {
     'When a piece pulls both ways, it says so, instead of splitting the difference and calling it balanced.',
   feature4Title: 'Points you elsewhere',
   feature4Body:
-    'One tap opens the same story as other outlets told it. The read is a place to start an argument with, not settle one.',
+    'One click opens the same story as other outlets told it. Use it to start the argument, not to end it.',
   bandTitle: 'It never sees where else you’ve been.',
   bandLede:
     'Ground Truth reads the page you have open, and only to answer the question on screen. There’s no account, nothing of yours is stored, and what it read is gone when you close the browser. You choose which sites it works on — all of them, or a short list. The demo above works the same way: it fetches the link you hand it, and keeps nothing else.',
@@ -215,7 +215,7 @@ const de: SiteCopy = {
     'Zieht ein Text in beide Richtungen, steht das da — statt die Mitte auszurechnen und sie ausgewogen zu nennen.',
   feature4Title: 'Zeigt, wie andere berichten',
   feature4Body:
-    'Ein Tipp, und dieselbe Geschichte steht da, wie andere Medien sie erzählt haben. Ein Anfang für die Diskussion, kein Schlusswort.',
+    'Ein Klick, und dieselbe Geschichte steht da, wie andere Medien sie erzählt haben. Ein Anfang für die Diskussion, kein Schlusswort.',
   bandTitle: 'Was du sonst liest, sieht es nicht.',
   bandLede:
     'Ground Truth liest die Seite, die offen ist, und nur für die Frage auf dem Bildschirm. Kein Konto, nichts von dir wird gespeichert, und mit dem Browser ist auch das Gelesene weg. Du bestimmst, wo es arbeitet: überall oder auf einer kurzen Liste. Die Demo oben hält sich an dieselbe Regel — sie holt den Link, den du ihr gibst, mehr bleibt nicht.',
@@ -277,7 +277,7 @@ const fr: SiteCopy = {
     'Quand un texte tire dans les deux sens, il l’annonce, au lieu de faire la moyenne et d’appeler ça de l’équilibre.',
   feature4Title: 'Vous envoie voir ailleurs',
   feature4Body:
-    'Une pression, et la même histoire apparaît telle que d’autres médias l’ont racontée. De quoi ouvrir la discussion, pas la fermer.',
+    'Un clic, et la même histoire apparaît telle que d’autres médias l’ont racontée. De quoi ouvrir la discussion, pas la fermer.',
   bandTitle: 'Ce que vous lisez ailleurs, il ne le voit pas.',
   bandLede:
     'Ground Truth lit la page ouverte, et seulement pour répondre à ce qui s’affiche. Pas de compte, rien de vous n’est gardé, et ce qu’il a lu part avec le navigateur. Vous décidez où il travaille : partout, ou sur une courte liste. La démo ci-dessus suit la même règle — elle récupère le lien que vous lui donnez, et rien d’autre.',
@@ -340,7 +340,7 @@ const it: SiteCopy = {
     'Se un testo tira da tutte e due, lo dichiara, invece di fare la media e chiamarla equilibrio.',
   feature4Title: 'Ti manda a vedere altrove',
   feature4Body:
-    'Un tocco e trovi la stessa storia raccontata da altre testate. Un punto di partenza per discutere, non una sentenza.',
+    'Un clic e trovi la stessa storia raccontata da altre testate. Un punto di partenza per discutere, non una sentenza.',
   bandTitle: 'Non sa che altro stai leggendo.',
   bandLede:
     'Ground Truth legge la pagina che hai aperto, e solo per rispondere a quello che vedi. Nessun account, niente di tuo viene conservato, e con il browser se ne va anche quello che ha letto. Decidi tu dove lavora: ovunque o su un elenco breve. La demo qui sopra segue la stessa regola: scarica il link che le dai, nient’altro.',
@@ -402,7 +402,7 @@ const pt: SiteCopy = {
     'Se um texto puxa para ambos, avisa, em vez de fazer a média e chamar-lhe equilíbrio.',
   feature4Title: 'Manda-te ver noutro sítio',
   feature4Body:
-    'Um toque e aparece a mesma história contada por outros meios. Serve para abrir a discussão, não para a fechar.',
+    'Um clique e aparece a mesma história contada por outros meios. Serve para abrir a discussão, não para a fechar.',
   bandTitle: 'Não sabe o que mais andas a ler.',
   bandLede:
     'O Ground Truth lê a página que tens aberta, e só para responder ao que está no ecrã. Não há conta, nada de teu é guardado, e o que leu vai-se embora com o navegador. Decides tu onde trabalha: em todo o lado ou numa lista curta. A demo acima segue a mesma regra: descarrega o link que lhe dás, mais nada.',

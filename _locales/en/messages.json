@@ -213,7 +213,7 @@
     "message": "Not set"
   },
   "serviceBody": {
-    "message": "The address articles are sent to for reading. Run your own or point at the one the project publishes."
+    "message": "Where articles go to be read. Run your own, or point at the one the project publishes."
   },
   "serviceLabel": {
     "message": "Service address"
@@ -228,7 +228,7 @@
     "message": "Privacy"
   },
   "privacyBody": {
-    "message": "Article text is sent to the reading service above, which asks TypeSafe. Results are kept only for this browser session."
+    "message": "The panel sends article text to the reading service above, which asks TypeSafe. Results stay only for this browser session."
   },
   "kindNews": {
     "message": "News"
