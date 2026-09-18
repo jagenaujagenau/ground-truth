@@ -287,13 +287,27 @@ a {
 }
 .tagline {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  padding: 5px 14px 5px 8px;
+  max-width: 100%;
+  padding: 6px 14px 6px 8px;
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  /* Half the height of one line: a perfect pill while the text fits on one, and a rounded label
+     rather than a stretched lozenge once a longer language pushes it onto two. */
+  border-radius: 17px;
   font-size: 13px;
+  line-height: 1.45;
   color: var(--ink-2);
+  text-align: left;
+}
+/* On the text itself: as an anonymous box inside the flex, wrapping rules would not reach it. */
+.tagline span {
+  text-wrap: balance;
+}
+.tagline svg {
+  flex: none;
+  /* Sits with the first line instead of floating in the middle of a wrapped block. */
+  margin-top: 1px;
 }
 .tagline b {
   font-weight: 600;
@@ -453,6 +467,26 @@ a {
 @media (max-width: 640px) {
   .site-nav .nav-hide {
     display: none;
+  }
+}
+
+/* The narrowest phones, where a longer word for "Get it" would push the header off the screen:
+   the mark carries the brand on its own. */
+@media (max-width: 430px) {
+  .site-head .wrap {
+    gap: 10px;
+  }
+  .brand span {
+    display: none;
+  }
+  .site-nav {
+    gap: 10px;
+  }
+  .lang {
+    padding-left: 6px;
+  }
+  .lang select {
+    padding: 0 2px;
   }
 }
 
