@@ -1,0 +1,795 @@
+---
+import {panelStrings, site, type Locale} from '../i18n'
+
+// Each pick opens whatever that outlet is leading with right now (see /api/pick).
+const PICKS = [
+  {label: 'NPR', outlet: 'npr'},
+  {label: 'Fox News', outlet: 'fox'},
+  {label: 'The Guardian', outlet: 'guardian'},
+  {label: 'BBC', outlet: 'bbc'}
+]
+
+const {lang} = Astro.props as {lang: Locale}
+const copy = site(lang)
+
+// One dictionary for the client: the extension's catalog for the panel, plus the handful of
+// strings that belong to the demo around it.
+const strings = {
+  ...panelStrings(lang),
+  idleTitle: copy.idleTitle,
+  idleBody: copy.idleBody,
+  nothingTitle: copy.simNothingTitle,
+  openOriginal: copy.simOpenOriginal,
+  newTab: copy.simNewTab,
+  errAddress: copy.errAddress,
+  errBlocked: copy.errBlocked,
+  errUnreachable: copy.errUnreachable,
+  errNotPage: copy.errNotPage,
+  errThin: copy.errThin,
+  errRate: copy.errRate,
+  errDaily: copy.errDaily,
+  errService: copy.errService,
+  errUnknown: copy.errUnknown
+}
+---
+
+<div class="sim" id="sim" data-panel="open">
+  <div class="sim-frame">
+    <div class="sim-tabstrip">
+      <span class="sim-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div class="sim-tabs">
+        <span class="sim-tab" aria-selected="true">
+          <span class="sim-favicon" data-letter="•" aria-hidden="true" data-tab-icon></span>
+          <span class="sim-tab-title" data-tab-title>{copy.simNewTab}</span>
+        </span>
+      </div>
+    </div>
+
+    <form class="sim-toolbar" id="sim-form">
+      <span class="sim-nav" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
+        <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" /></svg>
+      </span>
+      <span class="sim-url">
+        <svg viewBox="0 0 24 24" aria-hidden="true"
+          ><path d="M7 10V7.5a5 5 0 0 1 10 0V10M5.5 10h13v9.5h-13z" /></svg
+        >
+        <label class="sr-only" for="sim-input">{copy.simUrlLabel}</label>
+        <input
+          id="sim-input"
+          name="url"
+          type="text"
+          inputmode="url"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder={copy.simPlaceholder}
+        />
+      </span>
+      <button class="sim-go btn btn-primary btn-sm" type="submit" data-go>{copy.simRead}</button>
+      <button
+        class="sim-action"
+        id="sim-icon"
+        type="button"
+        aria-label={copy.simToggleAria}
+      >
+        <canvas width="64" height="64" aria-hidden="true"></canvas>
+        <span class="sim-badge" data-badge>–</span>
+      </button>
+    </form>
+
+    <div class="sim-viewport">
+      <article class="sim-page" id="sim-page" tabindex="0">
+        <div class="sim-page-inner" data-doc>
+          <div class="sim-blank">
+            <p class="sim-blank-title">{copy.simBlankTitle}</p>
+            <p>{copy.simBlankBody}</p>
+          </div>
+        </div>
+      </article>
+      <aside class="sim-panel" id="sim-panel" aria-label={copy.simPanelAria}></aside>
+    </div>
+  </div>
+
+  <div class="sim-picks">
+    <span>{copy.simTryOne}</span>
+    {PICKS.map((p) => <button type="button" class="pick" data-outlet={p.outlet}>{p.label}</button>)}
+  </div>
+
+  <p class="sim-caption">{copy.simCaption}</p>
+</div>
+
+<script type="application/json" id="sim-strings" set:html={JSON.stringify(strings)}></script>
+
+<script>
+  import {renderPanel, type Analysis, type Article, type PanelState} from '../sim/panel'
+  import {drawMark, isAllowed, leanShares, leanSide, parseDomains} from '../sim/typesafe'
+  import panelCss from '../sim/panel.css?raw'
+
+  // The page hands the script one dictionary: the extension's catalog plus the demo's own strings.
+  const strings = JSON.parse(document.getElementById('sim-strings')!.textContent!) as Record<string, string>
+  const t = (key: string, ...subs: (string | number)[]) =>
+    subs.reduce<string>((out, sub, i) => out.replaceAll(`$${i + 1}`, String(sub)), strings[key] ?? key)
+
+  // The server answers with a code, never with sentences: the wording lives here, in the reader's
+  // language. `message` is the English original, kept for anything that is not this page.
+  const ERRORS: Record<string, string> = {
+    address: 'errAddress',
+    blocked: 'errBlocked',
+    unreachable: 'errUnreachable',
+    notpage: 'errNotPage',
+    thin: 'errThin',
+    rate: 'errRate',
+    daily: 'errDaily',
+    service: 'errService'
+  }
+  const errorText = (code?: string) => t(ERRORS[code ?? ''] ?? 'errUnknown')
+
+  const sim = document.getElementById('sim')!
+  const host = document.getElementById('sim-panel')!
+  const page = document.getElementById('sim-page')!
+  const doc = sim.querySelector<HTMLElement>('[data-doc]')!
+  const form = document.getElementById('sim-form') as HTMLFormElement
+  const input = document.getElementById('sim-input') as HTMLInputElement
+  const go = sim.querySelector<HTMLButtonElement>('[data-go]')!
+  const tabTitle = sim.querySelector<HTMLElement>('[data-tab-title]')!
+  const tabIcon = sim.querySelector<HTMLElement>('[data-tab-icon]')!
+  const iconBtn = document.getElementById('sim-icon') as HTMLButtonElement
+  const canvas = iconBtn.querySelector('canvas') as HTMLCanvasElement
+  const badge = iconBtn.querySelector('[data-badge]') as HTMLElement
+
+  // Shadow root so the extension's own stylesheet cannot leak into the marketing page, or vice
+  // versa. `:root` has no meaning in a shadow tree, so the token block is re-homed onto :host.
+  const shadow = host.attachShadow({mode: 'open'})
+  const style = document.createElement('style')
+  style.textContent =
+    panelCss.replace(/:root/g, ':host') +
+    `:host{display:block;background:var(--paper);color:var(--ink);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}` +
+    // In the extension a favicon comes from a tab the browser has already loaded. Here it is a
+    // cross-site request that can hang rather than fail, so the letter tile holds until the image
+    // is actually decoded.
+    `.favicon img{opacity:0}.favicon img.ok{opacity:1}
+     .favicon:has(img)::before{content:attr(data-letter)}
+     .favicon:has(img.ok)::before{content:none}
+     .favicon:has(img):not(:has(img.ok)){background:var(--sunk)}`
+  const app = document.createElement('div')
+  app.id = 'app'
+  app.setAttribute('aria-live', 'polite')
+  shadow.append(style, app)
+
+  const state: PanelState = {t, view: 'page', status: 'idle', domains: []}
+  let current: URL | undefined
+  let run = 0
+
+  function paintIcon() {
+    const g = canvas.getContext('2d')!
+    const a = state.status === 'done' ? state.analysis : undefined
+    const newsy = a && a.isNews >= 0.5
+    drawMark(g, 64, newsy ? leanShares(a!.lean.probabilities) : undefined)
+    const side = newsy ? leanSide(a!.lean.probabilities) : undefined
+    badge.textContent = state.status === 'analyzing' ? '…' : (side ?? '–')
+    badge.dataset.side = side ?? 'idle'
+  }
+
+  function render() {
+    app.innerHTML = renderPanel(state)
+    paintIcon()
+  }
+
+  const el = (tag: string, cls?: string, text?: string) => {
+    const node = document.createElement(tag)
+    if (cls) node.className = cls
+    if (text) node.textContent = text
+    return node
+  }
+
+  function showTab(url: URL | undefined, title = t('newTab')) {
+    tabTitle.textContent = title
+    tabIcon.dataset.letter = url ? url.hostname.replace(/^www\./, '')[0] : '•'
+    tabIcon.replaceChildren()
+    if (url) {
+      const img = document.createElement('img')
+      img.src = `${url.origin}/favicon.ico`
+      img.alt = ''
+      img.referrerPolicy = 'no-referrer'
+      img.addEventListener('error', () => img.remove())
+      img.addEventListener('load', () => img.naturalWidth && img.classList.add('ok'))
+      tabIcon.append(img)
+    }
+  }
+
+  /** The page pane: what the browser would be showing, from the text the server pulled out. */
+  function showDocument(article: Article) {
+    const url = new URL(article.url)
+    const inner = el('div')
+    inner.append(el('p', 'sim-kicker', article.source))
+    inner.append(el('h1', '', article.title))
+    const link = document.createElement('a')
+    link.className = 'sim-origin'
+    link.href = article.url
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    link.textContent = t('openOriginal')
+    inner.append(link)
+    const prose = el('div', 'sim-prose')
+    for (const p of (article.text ?? '').split('\n\n')) prose.append(el('p', '', p))
+    inner.append(prose)
+    doc.replaceChildren(inner)
+    showTab(url, article.title)
+    page.scrollTop = 0
+  }
+
+  function showFetching(url: URL) {
+    const wrap = el('div', 'sim-fetching')
+    wrap.append(el('p', 'sim-kicker', url.hostname.replace(/^www\./, '')))
+    wrap.append(el('span', 'skel-line wide'))
+    wrap.append(el('span', 'skel-line'))
+    wrap.append(el('span', 'skel-block'))
+    for (let i = 0; i < 6; i++) wrap.append(el('span', `skel-line ${i % 3 === 2 ? 'short' : ''}`))
+    doc.replaceChildren(wrap)
+    showTab(url, url.hostname.replace(/^www\./, ''))
+    page.scrollTop = 0
+  }
+
+  function showBlank(title: string, body: string) {
+    const wrap = el('div', 'sim-blank')
+    wrap.append(el('p', 'sim-blank-title', title))
+    wrap.append(el('p', '', body))
+    doc.replaceChildren(wrap)
+  }
+
+  async function read(value: string, force = false) {
+    let url: URL
+    try {
+      url = new URL(/^https?:\/\//i.test(value.trim()) ? value.trim() : `https://${value.trim()}`)
+    } catch {
+      state.status = 'error'
+      state.article = undefined
+      state.message = t('errAddress')
+      return render()
+    }
+
+    current = url
+    input.value = url.href
+    state.view = 'page'
+    host.scrollTop = 0
+
+    const source = url.hostname.replace(/^www\./, '')
+    if (!isAllowed(source, state.domains)) {
+      state.status = 'off'
+      state.article = {url: url.href, source, title: url.href}
+      showBlank(t('pausedTitle', source), t('pausedBody'))
+      showTab(url, source)
+      return render()
+    }
+
+    const mine = ++run
+    state.status = 'analyzing'
+    state.article = undefined
+    state.analysis = undefined
+    go.disabled = true
+    showFetching(url)
+    render()
+
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({url: url.href, force})
+      })
+      const data = (await res.json()) as {
+        status: PanelState['status']
+        code?: string
+        article?: Article
+        analysis?: Analysis
+      }
+      if (mine !== run) return
+
+      state.status = data.status ?? 'error'
+      state.article = data.article
+      state.analysis = data.analysis
+      state.message = data.status === 'done' ? undefined : errorText(data.code)
+      if (data.article?.text) showDocument(data.article)
+      else showBlank(t('nothingTitle'), state.message ?? errorText())
+    } catch {
+      if (mine !== run) return
+      state.status = 'error'
+      state.message = t('errUnreachable')
+      showBlank(t('nothingTitle'), t('errUnreachable'))
+    } finally {
+      if (mine === run) {
+        go.disabled = false
+        render()
+      }
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    if (input.value.trim()) read(input.value)
+  })
+
+  sim.querySelectorAll<HTMLButtonElement>('.pick').forEach((b) =>
+    b.addEventListener('click', async () => {
+      b.disabled = true
+      try {
+        const res = await fetch(`/api/pick?outlet=${b.dataset.outlet}`)
+        const data = (await res.json()) as {url?: string}
+        if (data.url) read(data.url)
+        else {
+          state.status = 'error'
+          state.article = undefined
+          state.message = t('errUnreachable')
+          render()
+        }
+      } finally {
+        b.disabled = false
+      }
+    })
+  )
+
+  iconBtn.addEventListener('click', () => {
+    sim.dataset.panel = sim.dataset.panel === 'open' ? 'closed' : 'open'
+  })
+
+  // ---- Panel events: the same actions the real side panel wires up ----
+  app.addEventListener('click', (e) => {
+    const target = (e.target as Element).closest<HTMLElement>('[data-action]')
+    if (!target || (target as HTMLButtonElement).disabled) return
+    const {action, domain} = target.dataset
+    if (action === 'settings' || action === 'back') {
+      state.view = action === 'settings' ? 'settings' : 'page'
+      render()
+    } else if (action === 'refresh') {
+      if (current) read(current.href, true)
+    } else if (action === 'add-site' && domain) {
+      state.view = 'page'
+      saveDomains([...state.domains, domain])
+    } else if (action === 'remove-site' && domain) {
+      saveDomains(state.domains.filter((d) => d !== domain))
+    }
+  })
+
+  app.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const f = e.target as HTMLFormElement
+    const field = f.querySelector('input')!
+    if (f.dataset.form !== 'domain') return
+    const added = parseDomains(field.value)
+    if (!added.length) {
+      app.querySelector('#domain-error')!.textContent = t('domainError')
+      return field.focus()
+    }
+    field.value = ''
+    saveDomains([...state.domains, ...added])
+  })
+
+  app.addEventListener('input', (e) => {
+    if ((e.target as HTMLElement).id === 'domain')
+      app.querySelector('#domain-error')!.textContent = ''
+  })
+
+  // A favicon that fails to load is removed so the CSS letter tile shows instead; one that
+  // arrives is marked so the tile steps aside.
+  app.addEventListener(
+    'error',
+    (e) => {
+      const img = e.target as HTMLElement
+      if (img.parentElement?.classList.contains('favicon')) img.remove()
+    },
+    true
+  )
+  app.addEventListener(
+    'load',
+    (e) => {
+      const img = e.target as HTMLImageElement
+      if (img.parentElement?.classList.contains('favicon') && img.naturalWidth) img.classList.add('ok')
+    },
+    true
+  )
+
+  function saveDomains(next: string[]) {
+    state.domains = [...new Set(next)]
+    if (current) read(current.href)
+    else render()
+  }
+
+  render()
+</script>
+
+<style>
+  .sim {
+    display: grid;
+    gap: 14px;
+  }
+
+  .sim-frame {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    height: min(80vh, 720px);
+    min-height: 540px;
+    border: 1px solid var(--line-strong);
+    border-radius: 18px;
+    background: var(--sunk);
+    box-shadow: 0 40px 80px -50px rgba(22, 24, 29, 0.75), 0 2px 0 rgba(255, 255, 255, 0.4) inset;
+    overflow: hidden;
+  }
+
+  /* ---- Tab strip ---- */
+  .sim-tabstrip {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 9px 12px 0;
+    background: var(--sunk);
+  }
+  .sim-lights {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 9px;
+  }
+  .sim-lights i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+  .sim-tabs {
+    display: flex;
+    min-width: 0;
+  }
+  .sim-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    max-width: 340px;
+    padding: 8px 14px;
+    border-radius: 9px 9px 0 0;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 12.5px;
+  }
+  .sim-tab-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sim-favicon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    background: var(--line-strong);
+    font: 600 9px/1 var(--serif);
+    text-transform: uppercase;
+    color: var(--ink-2);
+    overflow: hidden;
+  }
+  .sim-favicon::before {
+    content: attr(data-letter);
+  }
+  .sim-favicon:has(img.ok) {
+    background: #fff;
+  }
+  .sim-favicon:has(img.ok)::before {
+    content: none;
+  }
+  .sim-favicon img {
+    opacity: 0;
+  }
+  .sim-favicon img.ok {
+    opacity: 1;
+  }
+  .sim-favicon img {
+    position: absolute;
+    inset: 1px;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    object-fit: contain;
+  }
+
+  /* ---- Toolbar ---- */
+  .sim-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .sim-nav {
+    display: flex;
+    gap: 2px;
+    color: var(--ink-3);
+  }
+  .sim-nav svg,
+  .sim-url > svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sim-url {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--sunk);
+    color: var(--ink-3);
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .sim-url:focus-within {
+    background: var(--surface);
+    box-shadow: 0 0 0 2px var(--left);
+  }
+  .sim-url input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: 13px/1 var(--sans);
+  }
+  .sim-url input::placeholder {
+    color: var(--ink-3);
+  }
+  .sim-url input:focus {
+    outline: none;
+  }
+  .sim-go {
+    flex: none;
+  }
+  .sim-action {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sim-action:hover {
+    background: var(--sunk);
+  }
+  .sim-action canvas {
+    width: 22px;
+    height: 22px;
+  }
+  .sim-badge {
+    position: absolute;
+    right: -1px;
+    bottom: 0;
+    min-width: 15px;
+    padding: 0 3px;
+    border-radius: 5px;
+    background: var(--ink-3);
+    color: var(--surface);
+    font: 600 8.5px/13px var(--sans);
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .sim-badge[data-side='L'] {
+    background: var(--left);
+    color: #fff;
+  }
+  .sim-badge[data-side='R'] {
+    background: var(--right);
+    color: #fff;
+  }
+  .sim-badge[data-side='C'] {
+    background: var(--center);
+    color: #fff;
+  }
+  .sim-badge[data-side='MIX'] {
+    background: var(--mixed);
+    color: #fff;
+  }
+
+  /* ---- Viewport ---- */
+  .sim-viewport {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    min-height: 0;
+    background: var(--surface);
+  }
+  .sim[data-panel='closed'] .sim-viewport {
+    grid-template-columns: minmax(0, 1fr) 0;
+  }
+  .sim-page {
+    min-width: 0;
+    overflow-y: auto;
+    padding: 34px 40px 60px;
+  }
+  .sim-page:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--left);
+  }
+  .sim-page-inner {
+    max-width: 62ch;
+    margin: 0 auto;
+  }
+  .sim-kicker {
+    font: 650 11px/1 var(--sans);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .sim-page :global(h1) {
+    margin: 14px 0 0;
+    font: 600 30px/1.18 var(--serif);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .sim-page :global(.sim-origin) {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .sim-page :global(.sim-origin):hover {
+    color: var(--ink);
+  }
+  .sim-page :global(.sim-prose p) {
+    margin: 18px 0 0;
+    font: 400 15.5px/1.68 var(--serif);
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+
+  /* With nothing loaded yet, the empty page sits in the middle of the window rather than the top. */
+  .sim-page:has(.sim-blank) .sim-page-inner {
+    display: grid;
+    align-content: center;
+    min-height: 100%;
+  }
+  .sim-page :global(.sim-blank) {
+    display: grid;
+    gap: 10px;
+    padding: 20px 0;
+    color: var(--ink-3);
+    text-align: center;
+    text-wrap: pretty;
+  }
+  .sim-page :global(.sim-blank-title) {
+    font: 600 20px/1.3 var(--serif);
+    color: var(--ink-2);
+  }
+
+  .sim-page :global(.sim-fetching) {
+    display: grid;
+    gap: 12px;
+  }
+  .sim-page :global(.skel-line),
+  .sim-page :global(.skel-block) {
+    display: block;
+    height: 13px;
+    border-radius: 7px;
+    background: linear-gradient(
+      90deg,
+      var(--sunk) 0%,
+      color-mix(in srgb, var(--sunk) 50%, var(--surface)) 50%,
+      var(--sunk) 100%
+    );
+    background-size: 200% 100%;
+    animation: sim-shimmer 1.4s ease-in-out infinite;
+  }
+  .sim-page :global(.skel-line.wide) {
+    height: 30px;
+  }
+  .sim-page :global(.skel-line.short) {
+    width: 62%;
+  }
+  .sim-page :global(.skel-block) {
+    height: 140px;
+    border-radius: 12px;
+  }
+  @keyframes sim-shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -100% 0;
+    }
+  }
+
+  .sim-panel {
+    min-width: 0;
+    border-left: 1px solid var(--line);
+    /* The panel scrolls on its own, like the real side panel. Scroll chains back to the page at
+       either end, so the demo never traps the reader mid-page. */
+    overflow-y: auto;
+    transition: opacity 0.2s;
+  }
+  .sim[data-panel='closed'] .sim-panel {
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  /* ---- Quick picks & caption ---- */
+  .sim-picks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--ink-3);
+  }
+  .pick {
+    padding: 5px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .pick:hover:not(:disabled) {
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .pick:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .sim-caption {
+    margin: 0 auto;
+    max-width: 64ch;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-3);
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 900px) {
+    .sim-frame {
+      height: auto;
+      min-height: 0;
+    }
+    .sim-viewport,
+    .sim[data-panel='closed'] .sim-viewport {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .sim-page {
+      max-height: 300px;
+      padding: 24px 20px 36px;
+    }
+    .sim-page :global(h1) {
+      font-size: 23px;
+    }
+    .sim-panel {
+      height: auto;
+      overflow: visible;
+      border-left: 0;
+      border-top: 1px solid var(--line-strong);
+    }
+    .sim[data-panel='closed'] .sim-panel {
+      height: 0;
+      overflow: hidden;
+    }
+    .sim-go {
+      display: none;
+    }
+  }
+</style>

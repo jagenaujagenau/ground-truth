@@ -20,5 +20,5 @@
     "allowImportingTsExtensions": true
   },
   "include": ["./", "extension-env.d.ts", "browser-global.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "website"]
 }
