@@ -154,7 +154,7 @@ const es: SiteCopy = {
   feature4Title: 'Te lleva a otras coberturas',
   feature4Body:
     'A un clic tenés la misma historia contada por otros medios. La lectura sirve para abrir la discusión, no para cerrarla.',
-  bandTitle: 'No sabe qué más estuviste leyendo.',
+  bandTitle: 'No tiene acceso a tu historial de navegación.',
   bandLede:
     'Ground Truth lee la página que tenés abierta, y solo para responder lo que ves en pantalla. No hay cuenta, no se guarda nada tuyo y lo que leyó se borra cuando cerrás el navegador. Vos elegís en qué sitios funciona: en todos o en una lista corta. La demo de arriba juega con las mismas reglas: baja el link que le das y no se queda con nada más.',
   bandCta: 'Agregarlo al navegador',
