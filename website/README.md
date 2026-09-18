@@ -60,6 +60,13 @@ The panel lives in a shadow root so the extension's stylesheet and the site's st
 reach each other. `:root` has no meaning inside a shadow tree, so the token block is rewritten onto
 `:host` when the CSS is injected.
 
+## Social cards
+
+`public/og/<lang>.png` is a 1200x630 card per language, drawn from that language's own headline so
+the two never drift. `npm run og` redraws them with whatever Chrome it finds (`CHROME_PATH`
+overrides); they are committed, so a build never needs a browser. The same script draws
+`apple-touch-icon.png` from `mark.svg`.
+
 ## Six languages
 
 The page is published in English, Spanish, German, French, Italian and Portuguese. English sits at
