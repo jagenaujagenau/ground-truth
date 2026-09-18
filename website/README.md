@@ -66,6 +66,22 @@ The panel lives in a shadow root so the extension's stylesheet and the site's st
 reach each other. `:root` has no meaning inside a shadow tree, so the token block is rewritten onto
 `:host` when the CSS is injected.
 
+## Example outlets
+
+`src/lib/outlets.ts` lists the papers offered as one-click examples, per language: Spanish readers
+get Clarín and La Nación, German readers taz and FAZ. Each set spans the spectrum where the feeds
+allow it. Only outlets whose feeds list real articles and whose pages can be read are in there;
+Le Monde, Welt and Expresso all refuse automated readers.
+
+`npm run icons` collects their favicons into `public/outlets/` and writes the map the page reads.
+They are served from this site rather than hotlinked, so opening a page about not being watched
+doesn't announce the visit to twenty-two mastheads.
+
+## Support
+
+`src/components/Support.astro` is the footer's support dialog: Patreon, Buy Me a Coffee, PayPal and
+a Bitcoin address, ported from tktk.lol into a plain `<dialog>`.
+
 ## Social cards
 
 `public/og/<lang>.png` is a 1200x630 card per language, drawn from that language's own headline so

@@ -40,6 +40,17 @@ export type SiteCopy = {
   footerLine: string
   footerPrivacy: string
   languageLabel: string
+  supportCta: string
+  supportTitle: string
+  supportBody: string
+  supportMonthly: string
+  supportOnce: string
+  supportDirect: string
+  supportCrypto: string
+  supportCopy: string
+  supportCopied: string
+  supportClose: string
+  supportThanks: string
   errAddress: string
   errBlocked: string
   errUnreachable: string
@@ -103,6 +114,17 @@ const en: SiteCopy = {
   footerLine: 'A read of how one article is written — not a score for the outlet that published it.',
   footerPrivacy: 'Privacy',
   languageLabel: 'Language',
+  supportCta: 'Support',
+  supportTitle: 'Support Ground Truth',
+  supportBody: 'Every article read costs a little at the API, and the demo is free to use. If it is useful to you, this is what keeps it up.',
+  supportMonthly: 'Monthly',
+  supportOnce: 'One-off',
+  supportDirect: 'Direct payment',
+  supportCrypto: 'Crypto',
+  supportCopy: 'Copy address',
+  supportCopied: 'Copied',
+  supportClose: 'Close',
+  supportThanks: 'Thank you for reading closely.',
   errAddress: 'That doesn’t look like a web address.',
   errBlocked: 'That site turned us away — many outlets block automated readers.',
   errUnreachable: 'That site couldn’t be reached.',
@@ -167,6 +189,17 @@ const es: SiteCopy = {
     'Una lectura de cómo está escrita una nota, no una calificación al medio que la publicó.',
   footerPrivacy: 'Privacidad',
   languageLabel: 'Idioma',
+  supportCta: 'Apoyar',
+  supportTitle: 'Apoyá Ground Truth',
+  supportBody: 'Cada nota leída cuesta unos centavos de API y la demo es gratis. Si te sirve, esto es lo que la mantiene en pie.',
+  supportMonthly: 'Mensual',
+  supportOnce: 'Por única vez',
+  supportDirect: 'Pago directo',
+  supportCrypto: 'Cripto',
+  supportCopy: 'Copiar dirección',
+  supportCopied: 'Copiada',
+  supportClose: 'Cerrar',
+  supportThanks: 'Gracias por leer con atención.',
   errAddress: 'Esto no parece una dirección web.',
   errBlocked: 'El sitio nos rechazó: muchos medios bloquean a los lectores automáticos.',
   errUnreachable: 'No pudimos entrar a ese sitio.',
@@ -231,6 +264,17 @@ const de: SiteCopy = {
     'Eine Einschätzung, wie ein Artikel geschrieben ist — keine Note für das Medium dahinter.',
   footerPrivacy: 'Datenschutz',
   languageLabel: 'Sprache',
+  supportCta: 'Unterstützen',
+  supportTitle: 'Ground Truth unterstützen',
+  supportBody: 'Jeder gelesene Artikel kostet ein paar Cent an der API, und die Demo ist frei. Wenn sie dir etwas bringt, hält das sie am Laufen.',
+  supportMonthly: 'Monatlich',
+  supportOnce: 'Einmalig',
+  supportDirect: 'Direkt zahlen',
+  supportCrypto: 'Krypto',
+  supportCopy: 'Adresse kopieren',
+  supportCopied: 'Kopiert',
+  supportClose: 'Schliessen',
+  supportThanks: 'Danke fürs genaue Lesen.',
   errAddress: 'Das sieht nicht nach einer Webadresse aus.',
   errBlocked: 'Die Seite hat uns abgewiesen — viele Medien sperren automatische Leser aus.',
   errUnreachable: 'Die Seite war nicht erreichbar.',
@@ -295,6 +339,17 @@ const fr: SiteCopy = {
     'Une lecture de la façon dont un article est écrit — pas une note pour le média qui le publie.',
   footerPrivacy: 'Confidentialité',
   languageLabel: 'Langue',
+  supportCta: 'Soutenir',
+  supportTitle: 'Soutenir Ground Truth',
+  supportBody: 'Chaque article lu coûte quelques centimes d’API, et la démo est gratuite. Si elle vous sert, c’est ce qui la maintient en ligne.',
+  supportMonthly: 'Mensuel',
+  supportOnce: 'Une fois',
+  supportDirect: 'Paiement direct',
+  supportCrypto: 'Crypto',
+  supportCopy: 'Copier l’adresse',
+  supportCopied: 'Copiée',
+  supportClose: 'Fermer',
+  supportThanks: 'Merci de lire de près.',
   errAddress: 'Cela ne ressemble pas à une adresse web.',
   errBlocked:
     'Le site nous a refusé l’entrée — beaucoup de médias bloquent les lecteurs automatiques.',
@@ -360,6 +415,17 @@ const it: SiteCopy = {
     'Una lettura di come è scritto un articolo, non un voto alla testata che lo pubblica.',
   footerPrivacy: 'Privacy',
   languageLabel: 'Lingua',
+  supportCta: 'Sostieni',
+  supportTitle: 'Sostieni Ground Truth',
+  supportBody: 'Ogni articolo letto costa qualche centesimo di API, e la demo è gratis. Se ti serve, è questo che la tiene in piedi.',
+  supportMonthly: 'Mensile',
+  supportOnce: 'Una tantum',
+  supportDirect: 'Pagamento diretto',
+  supportCrypto: 'Cripto',
+  supportCopy: 'Copia l’indirizzo',
+  supportCopied: 'Copiato',
+  supportClose: 'Chiudi',
+  supportThanks: 'Grazie per leggere con attenzione.',
   errAddress: 'Questo non sembra un indirizzo web.',
   errBlocked: 'Il sito ci ha respinti: molte testate bloccano i lettori automatici.',
   errUnreachable: 'Non siamo riusciti a raggiungere il sito.',
@@ -423,6 +489,17 @@ const pt: SiteCopy = {
   footerLine: 'Uma leitura de como um artigo está escrito — não uma nota ao meio que o publicou.',
   footerPrivacy: 'Privacidade',
   languageLabel: 'Idioma',
+  supportCta: 'Apoiar',
+  supportTitle: 'Apoiar o Ground Truth',
+  supportBody: 'Cada artigo lido custa uns cêntimos de API, e a demo é gratuita. Se te for útil, é isto que a mantém de pé.',
+  supportMonthly: 'Mensal',
+  supportOnce: 'Uma vez',
+  supportDirect: 'Pagamento direto',
+  supportCrypto: 'Cripto',
+  supportCopy: 'Copiar endereço',
+  supportCopied: 'Copiado',
+  supportClose: 'Fechar',
+  supportThanks: 'Obrigado por leres com atenção.',
   errAddress: 'Isto não parece um endereço web.',
   errBlocked: 'O site recusou-nos — muitos meios bloqueiam leitores automáticos.',
   errUnreachable: 'Não foi possível chegar a esse site.',

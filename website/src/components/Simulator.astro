@@ -1,15 +1,10 @@
 ---
 import {panelStrings, site, type Locale} from '../i18n'
-
-// Each pick opens whatever that outlet is leading with right now (see /api/pick).
-const PICKS = [
-  {label: 'NPR', outlet: 'npr'},
-  {label: 'Fox News', outlet: 'fox'},
-  {label: 'The Guardian', outlet: 'guardian'},
-  {label: 'BBC', outlet: 'bbc'}
-]
+import {iconOf, OUTLETS} from '../lib/outlets'
 
 const {lang} = Astro.props as {lang: Locale}
+// Papers in the reader's own language. Each opens whatever it is leading with right now (/api/pick).
+const PICKS = OUTLETS[lang] ?? OUTLETS.en
 const copy = site(lang)
 
 // One dictionary for the client: the extension's catalog for the panel, plus the handful of
@@ -95,7 +90,14 @@ const strings = {
 
   <div class="sim-picks">
     <span>{copy.simTryOne}</span>
-    {PICKS.map((p) => <button type="button" class="pick" data-outlet={p.outlet}>{p.label}</button>)}
+    {
+      PICKS.map((p) => (
+        <button type="button" class="pick" data-outlet={p.id}>
+          {iconOf(p) && <img class="pick-icon" src={iconOf(p)} alt="" width="15" height="15" />}
+          {p.label}
+        </button>
+      ))
+    }
   </div>
 
   <p class="sim-caption">{copy.simCaption}</p>
@@ -321,6 +323,15 @@ const strings = {
   form.addEventListener('submit', (e) => {
     e.preventDefault()
     if (input.value.trim()) read(input.value)
+  })
+
+  // A masthead's favicon is a cross-site request that can hang as easily as fail: the icon appears
+  // only once it has actually decoded, and the button reads fine without it.
+  sim.querySelectorAll<HTMLImageElement>('.pick-icon').forEach((img) => {
+    const show = () => img.naturalWidth && img.classList.add('ok')
+    img.addEventListener('load', show)
+    img.addEventListener('error', () => img.remove())
+    if (img.complete) show()
   })
 
   sim.querySelectorAll<HTMLButtonElement>('.pick').forEach((b) =>
@@ -758,7 +769,10 @@ const strings = {
     color: var(--ink-3);
   }
   .pick {
-    padding: 5px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px 5px 9px;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
     background: transparent;
@@ -766,6 +780,17 @@ const strings = {
     font: inherit;
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .pick-icon {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .pick-icon.ok {
+    opacity: 1;
   }
   .pick:hover:not(:disabled) {
     background: var(--surface);

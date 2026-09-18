@@ -1,5 +1,6 @@
 ---
 import Simulator from './Simulator.astro'
+import Support from './Support.astro'
 import {DEFAULT_LOCALE, LOCALES, localePath, site, type Locale} from '../i18n'
 import '../styles/global.css'
 
@@ -182,6 +183,7 @@ const features = [
       <div class="wrap">
         <p>{copy.footerLine}</p>
         <nav class="foot-links">
+          <Support lang={lang} />
           <a href={repo}>GitHub</a>
           <a href={`${repo}/blob/main/PRIVACY.md`}>{copy.footerPrivacy}</a>
         </nav>

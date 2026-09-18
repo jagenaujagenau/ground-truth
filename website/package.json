@@ -12,7 +12,8 @@
     "astro": "astro",
     "sync": "node scripts/sync-extension.mjs",
     "og": "node scripts/og-images.mjs",
-    "test": "node src/lib/youtube.test.ts"
+    "test": "node src/lib/youtube.test.ts",
+    "icons": "node scripts/outlet-icons.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.6",

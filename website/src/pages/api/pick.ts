@@ -1,17 +1,11 @@
 import type {APIRoute} from 'astro'
 import {fetchArticle} from '../../lib/fetch-article'
+import {feedOf} from '../../lib/outlets'
 
 export const prerender = false
 
 // The quick picks hand you whatever that outlet is leading with right now, so the demo never points
-// at an article that has since gone stale.
-const FEEDS: Record<string, string> = {
-  npr: 'https://feeds.npr.org/1014/rss.xml',
-  fox: 'https://moxie.foxnews.com/google-publisher/politics.xml',
-  guardian: 'https://www.theguardian.com/us-news/rss',
-  bbc: 'https://feeds.bbci.co.uk/news/world/rss.xml'
-}
-
+// at an article that has since gone stale. Which outlets belong to which language: lib/outlets.ts.
 const TTL = 10 * 60 * 1000
 const cache = new Map<string, {at: number; url: string}>()
 
@@ -35,7 +29,7 @@ const itemLink = (item: string) => {
 }
 
 export const GET: APIRoute = async ({url}) => {
-  const feed = FEEDS[url.searchParams.get('outlet') ?? '']
+  const feed = feedOf(url.searchParams.get('outlet') ?? '')
   if (!feed) return new Response(JSON.stringify({message: 'Unknown outlet.'}), {status: 400})
 
   const hit = cache.get(feed)
