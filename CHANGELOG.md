@@ -23,6 +23,9 @@ and the versions are the extension's own, as they appear in `src/manifest.json`.
 - `npm test` in `website/` asserts the payload carries only the content, and
   `npm run eval:source-blind` checks the same article under four mastheads against the live model,
   measuring its run-to-run noise first.
+- `npm run eval:mixed` reads a set of hand-labelled articles against the live model and reports
+  which cutoffs sort them into MIX and not, so the badge's 0.25 cutoff can be checked and moved on
+  evidence.
 
 ## [1.1.0] — 2026-09-18
 

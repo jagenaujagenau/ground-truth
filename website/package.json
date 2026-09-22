@@ -14,7 +14,8 @@
     "og": "node scripts/og-images.mjs",
     "test": "node src/lib/youtube.test.ts && node src/lib/typesafe.test.ts",
     "icons": "node scripts/outlet-icons.mjs",
-    "eval:source-blind": "node scripts/eval-source-blind.mjs"
+    "eval:source-blind": "node scripts/eval-source-blind.mjs",
+    "eval:mixed": "node scripts/eval-mixed.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.6",
