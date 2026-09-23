@@ -2,6 +2,7 @@ import type {APIRoute} from 'astro'
 import {fetchArticle, MIN_CHARS, ReadError, safeUrl} from '../../lib/fetch-article'
 import {fetchVideo, youtubeId} from '../../lib/youtube'
 import {analyze, type Analysis, type Article} from '../../lib/typesafe'
+import * as store from '../../lib/store'
 import {DAILY_READ_LIMIT, EXTENSION_PUBLIC_TYPESAFE_API_KEY, TYPESAFE_API_KEY} from 'astro:env/server'
 
 export const prerender = false
@@ -11,18 +12,14 @@ export const prerender = false
 // the extension's own .env can be reused).
 const API_KEY = TYPESAFE_API_KEY || EXTENSION_PUBLIC_TYPESAFE_API_KEY || ''
 
-// It is one shared key paying for every read, so: same URL is answered from memory, each visitor
-// gets a handful of reads a minute, and the whole site has a daily ceiling.
+// It is one shared key paying for every read, so: same URL is answered from the cache, each visitor
+// gets a handful of reads a minute, and the whole site has a daily ceiling. All three sit in the
+// shared store (lib/store.ts), so they hold across function instances.
 const CACHE_TTL = 6 * 60 * 60 * 1000
-const CACHE_MAX = 500
 const PER_IP = {reads: 12, windowMs: 5 * 60 * 1000}
 const DAILY_MAX = DAILY_READ_LIMIT
 
 type Result = {article: Article; analysis: Analysis}
-const cache = new Map<string, {at: number; result: Result}>()
-const hits = new Map<string, number[]>()
-let day = new Date().toDateString()
-let today = 0
 
 // The extension calls this route from whatever page you are reading, so it answers cross-origin.
 const CORS = {
@@ -43,33 +40,16 @@ const json = (body: unknown, status = 200) =>
 const fail = (status: number, status_: string, code: string, message: string) =>
   json({status: status_, code, message}, status)
 
-function allowed(ip: string) {
-  const now = Date.now()
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < PER_IP.windowMs)
-  if (recent.length >= PER_IP.reads) return false
-  recent.push(now)
-  hits.set(ip, recent)
-  if (hits.size > 5000) hits.clear()
-  return true
-}
+// A window opens at a visitor's first read and closes windowMs later.
+const allowed = async (ip: string) => (await store.increment(`rate:${ip}`, PER_IP.windowMs)) <= PER_IP.reads
 
-function underDailyCap() {
-  const now = new Date().toDateString()
-  if (now !== day) {
-    day = now
-    today = 0
-  }
-  return today < DAILY_MAX
-}
+// Counted by UTC day. The increment is the check, so instances racing each other can't overshoot.
+const underDailyCap = async () =>
+  (await store.increment(`daily:${new Date().toISOString().slice(0, 10)}`, 25 * 60 * 60 * 1000)) <= DAILY_MAX
 
-function cached(key: string) {
-  const hit = cache.get(key)
-  if (!hit) return
-  if (Date.now() - hit.at > CACHE_TTL) {
-    cache.delete(key)
-    return
-  }
-  return hit.result
+async function cached(key: string) {
+  const hit = await store.get(`read:${key}`)
+  return hit ? (JSON.parse(hit) as Result) : undefined
 }
 
 export const POST: APIRoute = async ({request, clientAddress}) => {
@@ -95,7 +75,7 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
   // live-blog URL, or the same URL an hour apart, are not looking at the same article.
   const key = url.trim().replace(/#.*$/, '') + (sent ? `#${fingerprint(sent.text)}` : '')
   // Refresh in the panel means read it again, not hand back what is already in memory.
-  const hit = body.force === true ? undefined : cached(key)
+  const hit = body.force === true ? undefined : await cached(key)
   if (hit) return json({status: 'done', cached: true, ...hit})
 
   // Only a URL this server will go and fetch has to be checked; a posted article is already read,
@@ -110,10 +90,8 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
   }
 
   const ip = clientAddress ?? 'unknown'
-  if (!allowed(ip))
+  if (!(await allowed(ip)))
     return fail(429, 'error', 'rate', 'That’s a lot of articles in a row. Give it a few minutes and try again.')
-  if (!underDailyCap())
-    return fail(429, 'error', 'daily', 'The demo has hit its reading limit for today. It resets tomorrow.')
 
   let article: Article
   const video = sent ? undefined : youtubeId(key)
@@ -130,12 +108,14 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
     }
   }
 
+  // Checked here, where the key is about to be spent, so a page that can't be fetched costs nothing.
+  if (!(await underDailyCap()))
+    return fail(429, 'error', 'daily', 'The demo has hit its reading limit for today. It resets tomorrow.')
+
   try {
-    today++
     const analysis = await analyze(article, API_KEY, AbortSignal.timeout(30_000))
     const result = {article, analysis}
-    cache.set(key, {at: Date.now(), result})
-    if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value!)
+    await store.set(`read:${key}`, JSON.stringify(result), CACHE_TTL)
     return json({status: 'done', ...result})
   } catch (e) {
     console.error('[analyze]', (e as Error).message)

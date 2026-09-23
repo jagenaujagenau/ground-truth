@@ -17,9 +17,10 @@ the key is an `astro:env` secret, read from the environment at request time and 
 the build. `site` comes from `SITE_URL`, falling back to Vercel's own production URL, so the
 `hreflang` links are absolute without configuring anything.
 
-One thing to know about running on functions: the URL cache, the per-visitor rate limit and the
-daily cap all live in memory, so each function instance keeps its own. They hold within an instance
-and drift apart across them. A shared store would fix that if the demo ever needs a real ceiling.
+The URL cache, the per-visitor rate limit and the daily cap live in Redis (`src/lib/store.ts`), so
+every function instance shares them. Connect an Upstash store to the Vercel project and it sets
+`KV_REST_API_URL` and `KV_REST_API_TOKEN`. Without them, as in local dev, each instance keeps its own
+in memory, and they hold within an instance but drift apart across them.
 
 ## The demo reads real articles
 
@@ -93,6 +94,7 @@ host permission; posted text is cached against a fingerprint of the text rather 
 | File | What it is |
 |------|------------|
 | `src/pages/api/analyze.ts` | The read: URL guard, rate limit, cache, TypeSafe call. |
+| `src/lib/store.ts` | Where the cache and the counters are kept: Redis if configured, else memory. |
 | `src/pages/api/pick.ts` | Resolves an outlet's newest *readable* story from its RSS feed. |
 | `src/lib/youtube.ts` | Turns a YouTube link into an article: its caption track as the text, the video's own title and channel. |
 | `src/lib/fetch-article.ts` | Fetches a page and extracts it, mirroring the extension's content script; blocks private addresses. |

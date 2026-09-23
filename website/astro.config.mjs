@@ -35,7 +35,9 @@ export default defineConfig({
     schema: {
       TYPESAFE_API_KEY: envField.string({context: 'server', access: 'secret', optional: true}),
       EXTENSION_PUBLIC_TYPESAFE_API_KEY: envField.string({context: 'server', access: 'secret', optional: true}),
-      DAILY_READ_LIMIT: envField.number({context: 'server', access: 'secret', optional: true, default: 400})
+      DAILY_READ_LIMIT: envField.number({context: 'server', access: 'secret', optional: true, default: 400}),
+      KV_REST_API_URL: envField.string({context: 'server', access: 'secret', optional: true}),
+      KV_REST_API_TOKEN: envField.string({context: 'server', access: 'secret', optional: true})
     }
   }
 })
