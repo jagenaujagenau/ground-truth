@@ -141,6 +141,28 @@ async function rememberFavicon(source: string, url: string) {
   if (favicons[source] !== url) await chrome.storage.local.set({favicons: {...favicons, [source]: url}})
 }
 
+/** Cheap content fingerprint (FNV-1a), the same one the server keys its cache on. */
+function fingerprint(text: string) {
+  let h = 0x811c9dc5
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return (h >>> 0).toString(36)
+}
+
+// Session storage has a quota and url:* entries outlive their tabs, so only the newest few are kept.
+const CACHE_MAX = 50
+
+async function remember(key: string, analysis: Analysis) {
+  await chrome.storage.session.set({[key]: {at: Date.now(), analysis}})
+  const all = (await chrome.storage.session.get(null)) as Record<string, {at?: number}>
+  const cached = Object.keys(all).filter((k) => k.startsWith('url:'))
+  if (cached.length <= CACHE_MAX) return
+  cached.sort((a, b) => (all[a].at ?? 0) - (all[b].at ?? 0))
+  await chrome.storage.session.remove(cached.slice(0, cached.length - CACHE_MAX))
+}
+
 async function check(tabId: number, force = false) {
   const run = Date.now()
   latestRun.set(tabId, run)
@@ -155,8 +177,9 @@ async function check(tabId: number, force = false) {
   const endpoint = await apiUrl()
   if (!endpoint) return save({status: 'nourl'})
 
-  const cacheKey = `url:${article.url}`
-  let analysis = force ? undefined : ((await chrome.storage.session.get(cacheKey))[cacheKey] as Analysis | undefined)
+  // Keyed by the text as well as the address, like the server: a live blog that has moved on is a new read.
+  const cacheKey = `url:${article.url}#${fingerprint(article.text)}`
+  let analysis = force ? undefined : (await chrome.storage.session.get(cacheKey))[cacheKey]?.analysis as Analysis | undefined
   if (!analysis) {
     await save({status: 'analyzing', article})
     try {
@@ -164,7 +187,7 @@ async function check(tabId: number, force = false) {
     } catch (e) {
       return save({status: 'error', article, message: (e as Error).message})
     }
-    await chrome.storage.session.set({[cacheKey]: analysis})
+    await remember(cacheKey, analysis)
   }
   if (!current()) return
   await save({status: 'done', article, analysis})
