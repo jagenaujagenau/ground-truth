@@ -13,6 +13,9 @@ assert.deepEqual(leanLabel({'0': 0.03, '1': 0.47, '2': 0.08, '3': 0.36, '4': 0.0
 assert.equal(topLevel({'0': 0.48, '1': 0.1, '2': 0.42}, 3), 0)
 assert.equal(topLevel({'0': 0.1, '1': 0.2, '2': 0.7}, 3), 2)
 assert.equal(topLevel({}, 3), 0)
+// The cutoff is inclusive: a quarter on the smaller side is mixed, just under it is not
+assert.equal(leanLabel({'1': 0.75, '3': 0.25}).mixed, true)
+assert.equal(leanLabel({'1': 0.76, '3': 0.24}).mixed, false)
 assert.equal(leanSide({'0': 0.03, '1': 0.47, '2': 0.08, '3': 0.36, '4': 0.06}), 'MIX')
 assert.equal(leanSide({'1': 0.8, '2': 0.2}), 'L')
 assert.equal(leanSide({'2': 0.9, '3': 0.1}), 'C')

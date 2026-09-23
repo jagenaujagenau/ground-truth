@@ -69,10 +69,15 @@ export function leanLabel(p: Record<string, number>): {level: number; mixed: boo
   return {level: topLevel(p, 5), mixed: isMixed(p)}
 }
 
-// ponytail: 0.25 cutoff is a guess from one article; tune on more examples
+/**
+ * A reading is "mixed" when the smaller of its Left and Right shares reaches this. `npm run eval:mixed`
+ * in website/ scores it against hand-labelled articles and says where it should sit.
+ */
+export const MIXED_CUTOFF = 0.25
+
 const isMixed = (p: Record<string, number>) => {
   const s = leanShares(p)
-  return Math.min(s.left, s.right) >= 0.25
+  return Math.min(s.left, s.right) >= MIXED_CUTOFF
 }
 
 /** Short side code for the toolbar badge. */
